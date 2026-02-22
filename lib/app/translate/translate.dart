@@ -46,7 +46,10 @@ class Languages extends Translations {
       'send_feedback': 'Send Feedback',
       'more_apps': 'More Apps',
 
-      // ---- App-specific translations ----
+      // App-specific
+      'app_name': 'Metronome',
+      'haptic': 'Vibration',
+      'tap_tempo': 'Tap Tempo',
     },
     'ko': {
       // 공통
@@ -79,7 +82,10 @@ class Languages extends Translations {
       'send_feedback': '피드백 보내기',
       'more_apps': '더 많은 앱',
 
-      // ---- 앱별 번역 추가 ----
+      // 앱별
+      'app_name': '메트로놈',
+      'haptic': '진동',
+      'tap_tempo': '탭하여 BPM 측정',
     },
   };
 }
