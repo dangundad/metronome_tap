@@ -25,7 +25,9 @@ class HomePage extends StatelessWidget {
                 controller.hapticEnabled.value
                     ? Icons.vibration_rounded
                     : Icons.phone_android_rounded,
-                color: controller.hapticEnabled.value ? cs.primary : cs.onSurfaceVariant,
+                color: controller.hapticEnabled.value
+                    ? cs.primary
+                    : cs.onSurfaceVariant,
               ),
               onPressed: controller.toggleHaptic,
               tooltip: 'haptic'.tr,
@@ -69,7 +71,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// ─── BPM Display ────────────────────────────────────────
+// ─── BPM Display (with AnimatedSwitcher scale on change) ──
 class _BpmDisplay extends StatelessWidget {
   final MetronomeController controller;
 
@@ -81,13 +83,21 @@ class _BpmDisplay extends StatelessWidget {
     return Obx(() {
       return Column(
         children: [
-          Text(
-            '${controller.bpm.value}',
-            style: TextStyle(
-              fontSize: 80.sp,
-              fontWeight: FontWeight.w900,
-              color: cs.primary,
-              height: 1,
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 150),
+            transitionBuilder: (child, anim) => ScaleTransition(
+              scale: CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
+              child: child,
+            ),
+            child: Text(
+              '${controller.bpm.value}',
+              key: ValueKey(controller.bpm.value),
+              style: TextStyle(
+                fontSize: 80.sp,
+                fontWeight: FontWeight.w900,
+                color: cs.primary,
+                height: 1,
+              ),
             ),
           ),
           Text(
@@ -114,7 +124,7 @@ class _BpmDisplay extends StatelessWidget {
   }
 }
 
-// ─── Beat Indicator ─────────────────────────────────────
+// ─── Beat Indicator (enhanced glow on active) ────────────
 class _BeatIndicator extends StatelessWidget {
   final MetronomeController controller;
 
@@ -133,26 +143,31 @@ class _BeatIndicator extends StatelessWidget {
         children: List.generate(ts, (i) {
           final isActive = isPlaying && active == i;
           final isAccent = i == 0;
+          final activeColor = isAccent ? cs.primary : cs.secondary;
 
           return AnimatedContainer(
             duration: const Duration(milliseconds: 80),
             margin: EdgeInsets.symmetric(horizontal: 6.w),
-            width: isActive ? (isAccent ? 40.r : 32.r) : 24.r,
-            height: isActive ? (isAccent ? 40.r : 32.r) : 24.r,
+            width: isActive ? (isAccent ? 44.r : 34.r) : 24.r,
+            height: isActive ? (isAccent ? 44.r : 34.r) : 24.r,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isActive
-                  ? (isAccent ? cs.primary : cs.secondary)
+                  ? activeColor
                   : isAccent
                       ? cs.primaryContainer
                       : cs.surfaceContainerHigh,
               boxShadow: isActive
                   ? [
                       BoxShadow(
-                        color: (isAccent ? cs.primary : cs.secondary)
-                            .withValues(alpha: 0.5),
-                        blurRadius: 12,
-                        spreadRadius: 2,
+                        color: activeColor.withValues(alpha: 0.7),
+                        blurRadius: isAccent ? 20 : 14,
+                        spreadRadius: isAccent ? 5 : 3,
+                      ),
+                      BoxShadow(
+                        color: activeColor.withValues(alpha: 0.3),
+                        blurRadius: isAccent ? 36 : 24,
+                        spreadRadius: isAccent ? 8 : 5,
                       ),
                     ]
                   : null,
@@ -184,9 +199,12 @@ class _TimeSignatureSelector extends StatelessWidget {
               onTap: () => controller.setTimeSignature(ts),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                 decoration: BoxDecoration(
-                  color: isSelected ? cs.primaryContainer : cs.surfaceContainerHigh,
+                  color: isSelected
+                      ? cs.primaryContainer
+                      : cs.surfaceContainerHigh,
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
                     color: isSelected ? cs.primary : Colors.transparent,
@@ -236,26 +254,30 @@ class _BpmSlider extends StatelessWidget {
               children: [
                 Text(
                   '${controller.minBpm}',
-                  style: TextStyle(fontSize: 12.sp, color: cs.onSurfaceVariant),
+                  style:
+                      TextStyle(fontSize: 12.sp, color: cs.onSurfaceVariant),
                 ),
                 Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove_rounded),
-                      onPressed: () => controller.setBpm(controller.bpm.value - 1),
+                      onPressed: () =>
+                          controller.setBpm(controller.bpm.value - 1),
                       iconSize: 20.r,
                     ),
                     SizedBox(width: 4.w),
                     IconButton(
                       icon: const Icon(Icons.add_rounded),
-                      onPressed: () => controller.setBpm(controller.bpm.value + 1),
+                      onPressed: () =>
+                          controller.setBpm(controller.bpm.value + 1),
                       iconSize: 20.r,
                     ),
                   ],
                 ),
                 Text(
                   '${controller.maxBpm}',
-                  style: TextStyle(fontSize: 12.sp, color: cs.onSurfaceVariant),
+                  style:
+                      TextStyle(fontSize: 12.sp, color: cs.onSurfaceVariant),
                 ),
               ],
             ),
@@ -288,7 +310,8 @@ class _PlayButton extends StatelessWidget {
             color: playing ? cs.error : cs.primary,
             boxShadow: [
               BoxShadow(
-                color: (playing ? cs.error : cs.primary).withValues(alpha: 0.4),
+                color: (playing ? cs.error : cs.primary)
+                    .withValues(alpha: 0.4),
                 blurRadius: playing ? 24 : 12,
                 spreadRadius: playing ? 4 : 0,
               ),
@@ -305,23 +328,76 @@ class _PlayButton extends StatelessWidget {
   }
 }
 
-// ─── Tap Tempo Button ────────────────────────────────────
-class _TapTempoButton extends StatelessWidget {
+// ─── Tap Tempo Button (with press scale feedback) ────────
+class _TapTempoButton extends StatefulWidget {
   final MetronomeController controller;
 
   const _TapTempoButton({required this.controller});
 
   @override
+  State<_TapTempoButton> createState() => _TapTempoButtonState();
+}
+
+class _TapTempoButtonState extends State<_TapTempoButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pressCtrl;
+  late Animation<double> _scaleAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _pressCtrl = AnimationController(
+      duration: const Duration(milliseconds: 80),
+      reverseDuration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnim = Tween<double>(begin: 1.0, end: 0.94).animate(
+      CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pressCtrl.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails _) {
+    _pressCtrl.forward();
+  }
+
+  void _onTapUp(TapUpDetails _) {
+    _pressCtrl.reverse();
+    widget.controller.onTap();
+  }
+
+  void _onTapCancel() {
+    _pressCtrl.reverse();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 52.h,
-      child: OutlinedButton.icon(
-        onPressed: controller.onTap,
-        icon: const Icon(Icons.touch_app_rounded),
-        label: Text(
-          'tap_tempo'.tr,
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+    return GestureDetector(
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTapCancel: _onTapCancel,
+      child: AnimatedBuilder(
+        animation: _scaleAnim,
+        builder: (context, child) => Transform.scale(
+          scale: _scaleAnim.value,
+          child: child,
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          height: 52.h,
+          child: OutlinedButton.icon(
+            onPressed: null, // handled by GestureDetector
+            icon: const Icon(Icons.touch_app_rounded),
+            label: Text(
+              'tap_tempo'.tr,
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+            ),
+          ),
         ),
       ),
     );
