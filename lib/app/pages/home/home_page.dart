@@ -144,6 +144,7 @@ class _TopBar extends StatelessWidget {
   }
 }
 
+// BPM Display — gradient card with enhanced typography
 class _BpmDisplay extends StatelessWidget {
   final MetronomeController controller;
 
@@ -152,23 +153,46 @@ class _BpmDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.14),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+    return Obx(() {
+      final isPlaying = controller.isPlaying.value;
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isPlaying
+                ? [
+                    cs.primary.withValues(alpha: 0.22),
+                    cs.primaryContainer,
+                  ]
+                : [
+                    cs.surfaceContainerLow,
+                    cs.surface,
+                  ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
-      ),
-      child: Obx(() {
-        return Column(
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(
+            color: isPlaying
+                ? cs.primary.withValues(alpha: 0.5)
+                : cs.outline.withValues(alpha: 0.15),
+            width: isPlaying ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isPlaying
+                  ? cs.primary.withValues(alpha: 0.28)
+                  : Colors.black.withValues(alpha: 0.10),
+              blurRadius: isPlaying ? 28 : 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
           children: [
+            // BPM number
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 150),
               transitionBuilder: (child, anim) => ScaleTransition(
@@ -179,38 +203,72 @@ class _BpmDisplay extends StatelessWidget {
                 '${controller.bpm.value}',
                 key: ValueKey(controller.bpm.value),
                 style: TextStyle(
-                  fontSize: 78.sp,
+                  fontSize: 86.sp,
                   fontWeight: FontWeight.w900,
-                  color: cs.primary,
+                  color: isPlaying ? cs.primary : cs.onSurface,
                   height: 1,
                   letterSpacing: 1,
                 ),
               ),
             ),
-            SizedBox(height: 6.h),
-            Text(
-              'bpm'.tr,
-              style: TextStyle(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w600,
-                color: cs.onSurfaceVariant,
-                letterSpacing: 2,
-              ),
+            SizedBox(height: 4.h),
+            // BPM label with decorative line
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 24.w,
+                  height: 1.5,
+                  decoration: BoxDecoration(
+                    color: cs.onSurfaceVariant.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(1.r),
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  'bpm'.tr,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w700,
+                    color: cs.onSurfaceVariant,
+                    letterSpacing: 3,
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Container(
+                  width: 24.w,
+                  height: 1.5,
+                  decoration: BoxDecoration(
+                    color: cs.onSurfaceVariant.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(1.r),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 8.h),
-            Text(
-              controller.tempoLabel,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: cs.primary.withValues(alpha: 0.8),
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w600,
+            SizedBox(height: 10.h),
+            // Tempo label badge
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+              decoration: BoxDecoration(
+                color: isPlaying
+                    ? cs.primary.withValues(alpha: 0.15)
+                    : cs.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Text(
+                controller.tempoLabel,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  color: isPlaying ? cs.primary : cs.onSurfaceVariant,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 }
 
@@ -369,18 +427,16 @@ class _BpmSlider extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove_rounded),
-                        onPressed: () =>
-                            controller.setBpm(controller.bpm.value - 1),
-                        iconSize: 22.r,
+                      _BpmStepButton(
+                        icon: Icons.remove_rounded,
+                        cs: cs,
+                        onTap: () => controller.setBpm(controller.bpm.value - 1),
                       ),
                       SizedBox(width: 4.w),
-                      IconButton(
-                        icon: const Icon(Icons.add_rounded),
-                        onPressed: () =>
-                            controller.setBpm(controller.bpm.value + 1),
-                        iconSize: 22.r,
+                      _BpmStepButton(
+                        icon: Icons.add_rounded,
+                        cs: cs,
+                        onTap: () => controller.setBpm(controller.bpm.value + 1),
                       ),
                     ],
                   ),
@@ -398,6 +454,38 @@ class _BpmSlider extends StatelessWidget {
   }
 }
 
+// BPM step button with subtle styled container
+class _BpmStepButton extends StatelessWidget {
+  final IconData icon;
+  final ColorScheme cs;
+  final VoidCallback onTap;
+
+  const _BpmStepButton({
+    required this.icon,
+    required this.cs,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 36.r,
+        height: 36.r,
+        decoration: BoxDecoration(
+          color: cs.primaryContainer,
+          borderRadius: BorderRadius.circular(10.r),
+        ),
+        child: Center(
+          child: Icon(icon, size: 18.r, color: cs.onPrimaryContainer),
+        ),
+      ),
+    );
+  }
+}
+
+// Play button — gradient CTA
 class _PlayButton extends StatelessWidget {
   final MetronomeController controller;
 
@@ -408,27 +496,57 @@ class _PlayButton extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Obx(() {
       final playing = controller.isPlaying.value;
-      return GestureDetector(
-        onTap: controller.toggle,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          width: 88.r,
-          height: 88.r,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: playing ? cs.error : cs.primary,
-            boxShadow: [
-              BoxShadow(
-                color: (playing ? cs.error : cs.primary).withValues(alpha: 0.4),
-                blurRadius: playing ? 24 : 12,
-                spreadRadius: playing ? 4 : 0,
+      return Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: playing
+              ? LinearGradient(
+                  colors: [cs.error, cs.errorContainer],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                )
+              : LinearGradient(
+                  colors: [cs.primary, cs.tertiary],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: (playing ? cs.error : cs.primary).withValues(alpha: 0.40),
+              blurRadius: playing ? 24 : 14,
+              spreadRadius: playing ? 2 : 0,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16.r),
+            onTap: controller.toggle,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    playing ? Icons.stop_rounded : Icons.play_arrow_rounded,
+                    size: 26.r,
+                    color: playing ? cs.onError : cs.onPrimary,
+                  ),
+                  SizedBox(width: 10.w),
+                  Text(
+                    playing ? 'stop'.tr : 'play'.tr,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: playing ? cs.onError : cs.onPrimary,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Icon(
-            playing ? Icons.stop_rounded : Icons.play_arrow_rounded,
-            color: playing ? cs.onError : cs.onPrimary,
-            size: 44.r,
+            ),
           ),
         ),
       );
@@ -484,6 +602,7 @@ class _TapTempoButtonState extends State<_TapTempoButton>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return AnimatedBuilder(
       animation: _scaleAnim,
       builder: (context, child) => Transform.scale(
@@ -497,12 +616,33 @@ class _TapTempoButtonState extends State<_TapTempoButton>
           onTapDown: _onTapDown,
           onTapUp: _onTapUp,
           onTapCancel: _onTapCancel,
-          child: OutlinedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.touch_app_rounded),
-            label: Text(
-              'tap_tempo'.tr,
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+          child: Container(
+            decoration: BoxDecoration(
+              color: cs.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(14.r),
+              border: Border.all(
+                color: cs.primary.withValues(alpha: 0.35),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.touch_app_rounded,
+                  size: 20.r,
+                  color: cs.primary,
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  'tap_tempo'.tr,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: cs.primary,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
