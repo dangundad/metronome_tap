@@ -73,6 +73,25 @@ Future<void> main() async {
 class MetronomeTapApp extends StatelessWidget {
   const MetronomeTapApp({super.key});
 
+  GetMaterialApp _buildFallbackApp() {
+    return GetMaterialApp(
+      supportedLocales: Languages.supportedLocales,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      translations: Languages(),
+      locale: const Locale('en'),
+      fallbackLocale: const Locale('en'),
+      debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.system,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      home: const Scaffold(body: SizedBox.shrink()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -80,6 +99,10 @@ class MetronomeTapApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
+        if (!Get.isRegistered<HiveService>()) {
+          return _buildFallbackApp();
+        }
+
         return GetMaterialApp(
           supportedLocales: Languages.supportedLocales,
           localizationsDelegates: const [

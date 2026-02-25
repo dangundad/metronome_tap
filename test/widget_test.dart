@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:metronome_tap/main.dart';
 
 void main() {
-  testWidgets('placeholder test', (WidgetTester tester) async {
-    // TODO: Add widget tests
-    expect(true, isTrue);
+  testWidgets('metronome_tap smoke test', (WidgetTester tester) async {
+    await tester.pumpWidget(const MetronomeTapApp());
+
+    expect(find.byType(MetronomeTapApp), findsOneWidget);
   });
 }
