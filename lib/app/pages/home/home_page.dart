@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -50,6 +51,8 @@ class HomePage extends GetView<MetronomeController> {
                       _PlayButton(controller: controller),
                       SizedBox(height: 14.h),
                       _TapTempoButton(controller: controller),
+                      SizedBox(height: 8.h),
+                      _TapCounterLabel(controller: controller),
                       SizedBox(height: 20.h),
                     ],
                   ),
@@ -125,6 +128,20 @@ class _TopBar extends StatelessWidget {
           icon: const Icon(Icons.settings_rounded),
           onPressed: () => Get.toNamed(Routes.SETTINGS),
           tooltip: 'settings'.tr,
+        ),
+        Obx(
+          () => IconButton(
+            icon: Icon(
+              controller.isSoundEnabled.value
+                  ? Icons.volume_up_rounded
+                  : Icons.volume_off_rounded,
+              color: controller.isSoundEnabled.value
+                  ? cs.primary
+                  : cs.onSurfaceVariant,
+            ),
+            onPressed: controller.toggleSound,
+            tooltip: 'sound'.tr,
+          ),
         ),
         Obx(
           () => IconButton(
@@ -593,6 +610,7 @@ class _TapTempoButtonState extends State<_TapTempoButton>
 
   void _onTapUp(TapUpDetails _) {
     _pressCtrl.reverse();
+    HapticFeedback.selectionClick();
     widget.controller.onTap();
   }
 
@@ -648,5 +666,46 @@ class _TapTempoButtonState extends State<_TapTempoButton>
         ),
       ),
     );
+  }
+}
+
+// Tap counter label shown below the Tap Tempo button
+class _TapCounterLabel extends StatelessWidget {
+  final MetronomeController controller;
+
+  const _TapCounterLabel({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Obx(() {
+      final count = controller.tapCount.value;
+      if (count == 0) {
+        return Text(
+          'tap_for_bpm'.tr,
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: cs.onSurfaceVariant.withValues(alpha: 0.6),
+          ),
+          textAlign: TextAlign.center,
+        );
+      }
+      final label = count < 2
+          ? 'tap_count_one'.tr
+          : 'tap_count_many'.trParams({'count': '$count'});
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 150),
+        child: Text(
+          label,
+          key: ValueKey(count),
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: cs.primary,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      );
+    });
   }
 }

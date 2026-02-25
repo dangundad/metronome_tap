@@ -26,7 +26,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flex_color_scheme: ^8.4.0
   google_fonts: ^6.3.2
-  lucide_icons_flutter: ^3.1.9
+  lucide_icons_flutter: ^3.1.10
 
   # 愿묎퀬
   google_mobile_ads: ^6.0.0

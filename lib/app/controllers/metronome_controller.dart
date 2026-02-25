@@ -15,6 +15,7 @@ class MetronomeController extends GetxController {
   static const _bpmKey = 'metro_bpm';
   static const _tsKey = 'metro_time_sig';
   static const _hapticKey = 'metro_haptic';
+  static const _soundKey = 'metro_sound';
 
   // State
   final bpm = 120.obs;
@@ -22,9 +23,11 @@ class MetronomeController extends GetxController {
   final isPlaying = false.obs;
   final activeBeat = (-1).obs; // -1 = stopped
   final hapticEnabled = true.obs;
+  final isSoundEnabled = true.obs;
 
   // Tap tempo
   final _tapTimes = <DateTime>[];
+  final tapCount = 0.obs; // visible tap counter
   Timer? _tapResetTimer;
 
   Timer? _beatTimer;
@@ -47,12 +50,15 @@ class MetronomeController extends GetxController {
     timeSignature.value = HiveService.to.getAppData<int>(_tsKey) ?? 4;
     hapticEnabled.value =
         HiveService.to.getAppData<bool>(_hapticKey) ?? true;
+    isSoundEnabled.value =
+        HiveService.to.getAppData<bool>(_soundKey) ?? true;
   }
 
   void _savePrefs() {
     HiveService.to.setAppData(_bpmKey, bpm.value);
     HiveService.to.setAppData(_tsKey, timeSignature.value);
     HiveService.to.setAppData(_hapticKey, hapticEnabled.value);
+    HiveService.to.setAppData(_soundKey, isSoundEnabled.value);
   }
 
   // ─── Controls ─────────────────────────────────────────
@@ -94,6 +100,11 @@ class MetronomeController extends GetxController {
     _savePrefs();
   }
 
+  void toggleSound() {
+    isSoundEnabled.value = !isSoundEnabled.value;
+    _savePrefs();
+  }
+
   // ─── Beat scheduling ──────────────────────────────────
   void _scheduleBeat() {
     _fireBeat(); // First beat immediately
@@ -108,6 +119,11 @@ class MetronomeController extends GetxController {
     final ts = timeSignature.value;
     final next = (activeBeat.value + 1) % ts;
     activeBeat.value = next;
+
+    if (isSoundEnabled.value) {
+      // SystemSound.click for every beat (downbeat and weak beats alike)
+      SystemSound.play(SystemSoundType.click);
+    }
 
     if (hapticEnabled.value) {
       if (next == 0) {
@@ -126,9 +142,11 @@ class MetronomeController extends GetxController {
     _tapResetTimer?.cancel();
     _tapResetTimer = Timer(const Duration(seconds: 3), () {
       _tapTimes.clear();
+      tapCount.value = 0;
     });
 
     _tapTimes.add(now);
+    tapCount.value = _tapTimes.length;
 
     // Keep only last 8 taps
     if (_tapTimes.length > 8) _tapTimes.removeAt(0);
