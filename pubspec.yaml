@@ -1,10 +1,9 @@
-# ================================================
+﻿# ================================================
 # DangunDad Flutter App - pubspec.yaml Template
 # ================================================
-# 사용법: 새 프로젝트에 이 내용을 복사 후 metronome_tap, Precise metronome and BPM tap counter 치환
+# ?ъ슜踰? ???꾨줈?앺듃?????댁슜??蹂듭궗 ??metronome_tap, Precise metronome and BPM tap counter 移섑솚
 
 name: metronome_tap
-description: "Precise metronome and BPM tap counter"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -17,10 +16,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # 상태 관리 & 라우팅
   get: ^4.7.3
-
-  # 로컬 저장소
+  # 濡쒖뺄 ??μ냼
   hive_ce: ^2.19.3
   hive_ce_flutter: ^2.3.4
   path_provider: ^2.1.5
@@ -31,21 +28,22 @@ dependencies:
   google_fonts: ^6.3.2
   lucide_icons_flutter: ^3.1.9
 
-  # 광고
+  # 愿묎퀬
   google_mobile_ads: ^6.0.0
+  in_app_purchase: ^3.2.3
 
-  # 유틸리티
+  # ?좏떥由ы떚
   intl: ^0.20.2
   share_plus: ^12.0.1
 
-  # ---- 앱별 추가 패키지 (필요시 아래 주석 해제) ----
-  # fl_chart: ^0.70.2              # 차트 (가계부, 습관, 통계)
-  # flutter_local_notifications:    # 알림 (타이머, 리마인더)
-  # just_audio: ^0.9.42            # 오디오 재생 (수면 사운드)
-  # mobile_scanner: ^6.0.5         # QR/바코드 스캔
-  # qr_flutter: ^4.1.0             # QR 코드 생성
-  # http: ^1.3.0                   # HTTP 요청 (환율 API, 퀴즈 API)
-  # pedometer: ^4.0.2              # 만보기 센서
+  # ---- ?깅퀎 異붽? ?⑦궎吏 (?꾩슂???꾨옒 二쇱꽍 ?댁젣) ----
+  # fl_chart: ^0.70.2              # 李⑦듃 (媛怨꾨?, ?듦?, ?듦퀎)
+  # flutter_local_notifications:    # ?뚮┝ (??대㉧, 由щ쭏?몃뜑)
+  # just_audio: ^0.9.42            # ?ㅻ뵒???ъ깮 (?섎㈃ ?ъ슫??
+  # mobile_scanner: ^6.0.5         # QR/諛붿퐫???ㅼ틪
+  # qr_flutter: ^4.1.0             # QR 肄붾뱶 ?앹꽦
+  # http: ^1.3.0                   # HTTP ?붿껌 (?섏쑉 API, ?댁쫰 API)
+  # pedometer: ^4.0.2              # 留뚮낫湲??쇱꽌
 
 dev_dependencies:
   flutter_test:
@@ -63,4 +61,8 @@ flutter:
   assets:
     - assets/images/
     - assets/data/
-    # - assets/sounds/             # 사운드 앱용
+    # - assets/sounds/             # ?ъ슫???깆슜
+
+
+
+

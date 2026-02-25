@@ -1,10 +1,4 @@
-// ================================================
-// DangunDad Flutter App - translate.dart Template
-// ================================================
-// mbti_pro 프로덕션 패턴 기반
-// 개발 시 한국어(ko)만 정의, 다국어는 추후 추가
-
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Languages extends Translations {
@@ -16,7 +10,6 @@ class Languages extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
     'en': {
-      // Common
       'settings': 'Settings',
       'save': 'Save',
       'cancel': 'Cancel',
@@ -32,8 +25,26 @@ class Languages extends Translations {
       'success': 'Success',
       'loading': 'Loading...',
       'no_data': 'No data',
+      'no_history': 'No history yet',
+      'history': 'History',
+      'stats': 'Statistics',
+      'refresh': 'Refresh',
+      'bpm': 'BPM',
+      'history_item_subtitle': 'screen: @screen\nroute: @route',
+      'total_events': 'Total Events',
+      'today_events': 'Today Events',
+      'week_events': 'This Week Events',
+      'unique_routes': 'Unique Routes',
+      'unique_screens': 'Unique Screens',
+      'top_events': 'Top Events',
 
-      // Settings
+      'open_history': 'Open History',
+      'open_stats': 'Open Stats',
+      'clear_all': 'Clear All',
+      'copy': 'Copy',
+
+      'settings_title': 'Settings',
+      'settings_page': 'Settings',
       'dark_mode': 'Dark Mode',
       'language': 'Language',
       'about': 'About',
@@ -41,18 +52,53 @@ class Languages extends Translations {
       'rate_app': 'Rate App',
       'privacy_policy': 'Privacy Policy',
       'remove_ads': 'Remove Ads',
-
-      // Feedback
+      'premium_title': 'Premium',
+      'premium_subtitle': 'Remove ads, unlock all features, and stay focused.',
+      'premium_benefits': 'Premium Benefits',
+      'premium_benefit_remove_ads': 'Remove ads',
+      'premium_benefit_unlimited': 'Use all features without limits',
+      'premium_benefit_statistics': 'View additional statistics',
+      'premium_plan_title': 'Choose a plan',
+      'premium_plan_weekly': 'Weekly',
+      'premium_plan_weekly_desc': '1 week premium access',
+      'premium_plan_monthly': 'Monthly',
+      'premium_plan_monthly_desc': '30 days premium access',
+      'premium_plan_yearly': 'Yearly',
+      'premium_plan_yearly_desc': '365 days premium access',
+      'premium_purchase': 'Start Premium',
+      'premium_restore': 'Restore Purchase',
+      'premium_owned': 'Premium is active',
+      'premium_purchase_note': 'If your payment is completed, purchase will be restored automatically after app restart.',
+      'purchase_error': 'Purchase Error',
+      'purchase_unavailable': 'In-app purchase is not available now.',
+      'purchase_failed': 'Purchase failed. Please try again.',
+      'restore_error': 'Restore failed. Please try again.',
+      'purchase_success': 'Purchase Completed',
+      'premium_ready': 'Premium is now active.',
       'send_feedback': 'Send Feedback',
       'more_apps': 'More Apps',
 
-      // App-specific
       'app_name': 'Metronome',
       'haptic': 'Vibration',
       'tap_tempo': 'Tap Tempo',
+      'guide': 'Guide',
+      'guide_title': 'How to use the metronome',
+      'guide_tip_1_title': '1) Set the BPM',
+      'guide_tip_1_desc':
+          'Use the slider or the +/- buttons to set a comfortable tempo.',
+      'guide_tip_2_title': '2) Choose a beat pattern',
+      'guide_tip_2_desc':
+          'Change the time signature to match music style and practice your rhythm.',
+      'guide_tip_3_title': '3) Save your preference',
+      'guide_tip_3_desc':
+          'Toggle vibration and keep your preferred tempo and beat settings.',
+      'guide_tip_4_title': '4) Review history',
+      'guide_tip_4_desc':
+          'Use history and statistics pages to check your metronome usage.',
+      'guide_footer':
+          'You can adjust everything in one tap from Home and use it immediately.',
     },
     'ko': {
-      // 공통
       'settings': '설정',
       'save': '저장',
       'cancel': '취소',
@@ -63,13 +109,29 @@ class Languages extends Translations {
       'done': '완료',
       'ok': '확인',
       'yes': '예',
-      'no': '아니오',
+      'no': '아니요',
       'error': '오류',
       'success': '성공',
-      'loading': '로딩 중...',
+      'loading': '불러오는 중...',
       'no_data': '데이터 없음',
-
-      // 설정
+      'no_history': '기록이 없습니다',
+      'history': '기록',
+      'stats': '통계',
+      'refresh': '새로고침',
+      'bpm': 'BPM',
+      'history_item_subtitle': '화면: @screen / 경로: @route',
+      'total_events': '총 이벤트',
+      'today_events': '오늘',
+      'week_events': '이번 주',
+      'unique_routes': '고유 경로',
+      'unique_screens': '고유 화면',
+      'top_events': '상위 이벤트',
+      'open_history': '히스토리',
+      'open_stats': '통계',
+      'clear_all': '전체 삭제',
+      'copy': '복사',
+      'settings_title': '설정',
+      'settings_page': '설정',
       'dark_mode': '다크 모드',
       'language': '언어',
       'about': '앱 정보',
@@ -77,15 +139,43 @@ class Languages extends Translations {
       'rate_app': '앱 평가',
       'privacy_policy': '개인정보처리방침',
       'remove_ads': '광고 제거',
-
-      // 피드백
+      'premium_title': '프리미엄',
+      'premium_subtitle': '광고 제거, 추가 기능 잠금 해제, 끊김 없는 이용을 제공합니다.',
+      'premium_benefits': '프리미엄 혜택',
+      'premium_benefit_remove_ads': '광고 제거',
+      'premium_benefit_unlimited': '모든 기능 잠금 해제',
+      'premium_benefit_statistics': '추가 통계 보기',
+      'premium_plan_title': '요금제 선택',
+      'premium_plan_weekly': '주간',
+      'premium_plan_weekly_desc': '7일 프리미엄',
+      'premium_plan_monthly': '월간',
+      'premium_plan_monthly_desc': '30일 프리미엄',
+      'premium_plan_yearly': '연간',
+      'premium_plan_yearly_desc': '365일 프리미엄',
+      'premium_purchase': '구매하기',
+      'premium_restore': '구매 복원',
+      'premium_owned': '프리미엄이 활성화됐어요',
+      'premium_purchase_note': '결제가 완료되면 앱 재시작 후에도 자동으로 복원돼요.',
+      'purchase_error': '구매 오류',
+      'purchase_unavailable': '인앱 결제를 사용할 수 없어요.',
+      'purchase_failed': '결제에 실패했어요. 다시 시도해요.',
+      'restore_error': '구매 복원에 실패했어요.',
+      'purchase_success': '결제 완료',
+      'premium_ready': '프리미엄이 활성화됐어요.',
       'send_feedback': '피드백 보내기',
       'more_apps': '더 많은 앱',
-
-      // 앱별
       'app_name': '메트로놈',
-      'haptic': '진동',
-      'tap_tempo': '탭하여 BPM 측정',
+      'haptic': '진동 피드백',
+      'tap_tempo': '탭 템포',
+      'guide': '사용법',
+      'guide_title': '메트로놈 사용법',
+      'guide_tip_1_title': '1) BPM 설정',
+      'guide_tip_2_title': '2) 박자 패턴 선택',
+      'guide_tip_3_title': '3) 설정 저장',
+      'guide_tip_4_title': '4) 기록 확인',
     },
   };
 }
+
+
+

@@ -1,7 +1,7 @@
-// ================================================
+﻿// ================================================
 // DangunDad Flutter App - app_routes.dart Template
 // ================================================
-// mbti_pro 프로덕션 패턴 기반 (part of 패턴)
+// mbti_pro ?熬곣뫁夷?筌먦끇????????リ옇?↑?(part of ?????
 
 // ignore_for_file: constant_identifier_names
 
@@ -11,12 +11,25 @@ abstract class Routes {
   Routes._();
 
   static const HOME = _Paths.HOME;
+  static const PREMIUM = _Paths.PREMIUM;
   static const SETTINGS = _Paths.SETTINGS;
-  // ---- 앱별 라우트 추가 ----
+  static const GUIDE = _Paths.GUIDE;
+  // ---- ?繹먮굟????源녿뮡???怨뺣뼺? ----
+  static const HISTORY = _Paths.HISTORY;
+  static const STATS = _Paths.STATS;
 }
 
 abstract class _Paths {
   static const HOME = '/home';
+  static const PREMIUM = '/premium';
   static const SETTINGS = '/settings';
-  // ---- 앱별 경로 추가 ----
+  static const GUIDE = '/guide';
+  // ---- ?繹먮굟???롪퍔?δ빳??怨뺣뼺? ----
+  static const HISTORY = '/history';
+  static const STATS = '/stats';
 }
+
+
+
+
+
