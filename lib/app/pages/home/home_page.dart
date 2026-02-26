@@ -359,9 +359,9 @@ class _TimeSignatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Container(
+    return Obx(() => Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -381,32 +381,57 @@ class _TimeSignatureCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(LucideIcons.music, size: 16.r, color: cs.primary),
-              SizedBox(width: 6.w),
-              Text(
-                'beat_pattern'.tr.isNotEmpty &&
-                        'beat_pattern'.tr != 'beat_pattern'
-                    ? 'beat_pattern'.tr
-                    : 'Beat Pattern',
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: cs.onSurfaceVariant,
-                  letterSpacing: 0.5,
+              Container(
+                width: 40.r,
+                height: 40.r,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: cs.onPrimaryContainer.withValues(alpha: 0.12),
                 ),
+                child: Center(
+                  child: Icon(
+                    LucideIcons.music,
+                    size: 20.r,
+                    color: cs.onPrimaryContainer,
+                  ),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'beat_pattern'.tr.isNotEmpty &&
+                            'beat_pattern'.tr != 'beat_pattern'
+                        ? 'beat_pattern'.tr
+                        : 'Beat Pattern',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: cs.onPrimaryContainer.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    '${controller.timeSignature.value}/4',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w800,
+                      color: cs.onPrimaryContainer,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 14.h),
           _TimeSignatureSelector(controller: controller),
         ],
       ),
-    );
+    ));
   }
 }
 
