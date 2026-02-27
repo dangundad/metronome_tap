@@ -6,6 +6,7 @@ import 'package:metronome_tap/app/services/hive_service.dart';
 
 import 'package:metronome_tap/app/services/purchase_service.dart';
 import 'package:metronome_tap/app/controllers/premium_controller.dart';
+import 'package:metronome_tap/app/services/app_rating_service.dart';
 
 class AppBinding implements Bindings {
   @override
@@ -28,6 +29,9 @@ class AppBinding implements Bindings {
 
     if (!Get.isRegistered<MetronomeController>()) {
       Get.put(MetronomeController(), permanent: true);
+    }
+    if (!Get.isRegistered<AppRatingService>()) {
+      Get.put(AppRatingService(), permanent: true);
     }
   }
 }
