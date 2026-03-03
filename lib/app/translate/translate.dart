@@ -178,9 +178,14 @@ class Languages extends Translations {
       'guide': '사용법',
       'guide_title': '메트로놈 사용법',
       'guide_tip_1_title': '1) BPM 설정',
+      'guide_tip_1_desc': '슬라이더나 +/- 버튼으로 원하는 템포를 설정하세요.',
       'guide_tip_2_title': '2) 박자 패턴 선택',
+      'guide_tip_2_desc': '박자를 변경하여 음악 스타일에 맞게 리듬을 연습하세요.',
       'guide_tip_3_title': '3) 설정 저장',
+      'guide_tip_3_desc': '진동을 켜거나 끄고, 원하는 템포와 박자 설정을 유지하세요.',
       'guide_tip_4_title': '4) 기록 확인',
+      'guide_tip_4_desc': '기록 및 통계 페이지에서 메트로놈 사용 현황을 확인하세요.',
+      'guide_footer': '홈에서 한 번의 탭으로 모든 설정을 바꾸고 바로 사용할 수 있어요.',
     },
   };
 }
