@@ -30,7 +30,9 @@ class MetronomeController extends GetxController {
   final tapCount = 0.obs; // visible tap counter
   Timer? _tapResetTimer;
 
+  // Absolute-time beat scheduler (drift-free)
   Timer? _beatTimer;
+  DateTime? _nextBeatTime; // wall-clock time of next scheduled beat
 
   @override
   void onInit() {
@@ -67,11 +69,13 @@ class MetronomeController extends GetxController {
   void start() {
     isPlaying.value = true;
     activeBeat.value = -1;
-    _scheduleBeat();
+    _startScheduler();
   }
 
   void stop() {
     _beatTimer?.cancel();
+    _beatTimer = null;
+    _nextBeatTime = null;
     isPlaying.value = false;
     activeBeat.value = -1;
   }
@@ -79,18 +83,20 @@ class MetronomeController extends GetxController {
   void setBpm(int value) {
     bpm.value = value.clamp(_minBpm, _maxBpm);
     if (isPlaying.value) {
-      _beatTimer?.cancel();
-      _scheduleBeat();
+      // Reschedule without firing an extra immediate beat.
+      // Compute the new next-beat time from now (preserving beat phase
+      // as best as possible at the new tempo).
+      _rescheduleFromNow();
     }
     _savePrefs();
   }
 
   void setTimeSignature(int beats) {
     timeSignature.value = beats;
+    // Reset beat counter so the next beat is beat 0 (downbeat).
     activeBeat.value = -1;
     if (isPlaying.value) {
-      _beatTimer?.cancel();
-      _scheduleBeat();
+      _rescheduleFromNow();
     }
     _savePrefs();
   }
@@ -105,15 +111,50 @@ class MetronomeController extends GetxController {
     _savePrefs();
   }
 
-  // ─── Beat scheduling ──────────────────────────────────
-  void _scheduleBeat() {
-    _fireBeat(); // First beat immediately
-    final intervalMs = (60000 / bpm.value).round();
-    _beatTimer = Timer.periodic(
-      Duration(milliseconds: intervalMs),
-      (_) => _fireBeat(),
-    );
+  // ─── Beat scheduling (drift-free) ─────────────────────
+  //
+  // Strategy: fire the first beat immediately and track the absolute wall-clock
+  // time that each subsequent beat SHOULD occur. Each timer fires slightly early
+  // by scheduling for (nextBeatTime - now); if Dart's event loop delivers it a
+  // few ms late, the next interval is shortened by that overshoot so the beat
+  // grid stays anchored to real time rather than drifting forward.
+
+  void _startScheduler() {
+    _fireBeat(); // beat 0 fires immediately
+    _nextBeatTime =
+        DateTime.now().add(_intervalDuration);
+    _scheduleNextTimer();
   }
+
+  /// Reschedule without firing an extra beat (used when BPM/TS changes mid-play).
+  void _rescheduleFromNow() {
+    _beatTimer?.cancel();
+    _beatTimer = null;
+    // Place the next beat one full interval from now.
+    _nextBeatTime =
+        DateTime.now().add(_intervalDuration);
+    _scheduleNextTimer();
+  }
+
+  void _scheduleNextTimer() {
+    final delay = _nextBeatTime!.difference(DateTime.now());
+    // Guard against a negative delay (event loop was very late).
+    final safeDelay = delay.isNegative ? Duration.zero : delay;
+    _beatTimer = Timer(safeDelay, _onTimerFired);
+  }
+
+  void _onTimerFired() {
+    if (!isPlaying.value) return;
+    _fireBeat();
+
+    // Advance the absolute target by exactly one interval regardless of when
+    // this callback actually ran — this prevents cumulative drift.
+    _nextBeatTime = _nextBeatTime!.add(_intervalDuration);
+    _scheduleNextTimer();
+  }
+
+  Duration get _intervalDuration =>
+      Duration(microseconds: (60000000 / bpm.value).round());
 
   void _fireBeat() {
     final ts = timeSignature.value;
@@ -121,7 +162,6 @@ class MetronomeController extends GetxController {
     activeBeat.value = next;
 
     if (isSoundEnabled.value) {
-      // SystemSound.click for every beat (downbeat and weak beats alike)
       SystemSound.play(SystemSoundType.click);
     }
 
@@ -146,10 +186,12 @@ class MetronomeController extends GetxController {
     });
 
     _tapTimes.add(now);
-    tapCount.value = _tapTimes.length;
 
-    // Keep only last 8 taps
+    // Keep only last 8 taps (trim before updating tapCount so the
+    // counter always reflects the number of intervals being averaged)
     if (_tapTimes.length > 8) _tapTimes.removeAt(0);
+
+    tapCount.value = _tapTimes.length;
 
     if (_tapTimes.length >= 2) {
       int totalMs = 0;
@@ -158,7 +200,8 @@ class MetronomeController extends GetxController {
             _tapTimes[i].difference(_tapTimes[i - 1]).inMilliseconds;
       }
       final avgInterval = totalMs / (_tapTimes.length - 1);
-      final newBpm = (60000 / avgInterval).round().clamp(_minBpm, _maxBpm);
+      final newBpm =
+          (60000 / avgInterval).round().clamp(_minBpm, _maxBpm);
       setBpm(newBpm);
     }
   }
