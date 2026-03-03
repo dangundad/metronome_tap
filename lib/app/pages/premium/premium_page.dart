@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'package:metronome_tap/app/controllers/premium_controller.dart';
 import 'package:metronome_tap/app/services/purchase_service.dart';
@@ -173,6 +175,10 @@ class PremiumPage extends GetView<PremiumController> {
               height: 1.35,
             ),
           ),
+          if (!kReleaseMode) ...[
+            SizedBox(height: 12.h),
+            _DevToggleButton(service: service, cs: cs),
+          ],
           SizedBox(height: 24.h),
         ],
       ),
@@ -390,5 +396,53 @@ class _PlansSection extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _DevToggleButton extends StatelessWidget {
+  final PurchaseService service;
+  final ColorScheme cs;
+
+  const _DevToggleButton({required this.service, required this.cs});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final isDevPremium = service.isDevPremium.value;
+      return GestureDetector(
+        onTap: () => service.toggleDevPremium(),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: isDevPremium
+                  ? cs.secondary.withValues(alpha: 0.6)
+                  : cs.outline.withValues(alpha: 0.4),
+            ),
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                LucideIcons.code,
+                size: 14.r,
+                color: cs.onSurface.withValues(alpha: 0.5),
+              ),
+              SizedBox(width: 6.w),
+              Text(
+                isDevPremium ? 'dev_premium_off'.tr : 'dev_premium_on'.tr,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: cs.onSurface.withValues(alpha: 0.5),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }
