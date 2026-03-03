@@ -13,8 +13,8 @@ class HomePage extends GetView<MetronomeController> {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -172,8 +172,8 @@ class _BpmDisplay extends StatelessWidget {
   const _BpmDisplay({required this.controller});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
     return Obx(() {
       final isPlaying = controller.isPlaying.value;
       return AnimatedContainer(
@@ -302,8 +302,8 @@ class _BeatIndicator extends StatelessWidget {
   const _BeatIndicator({required this.controller});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
     return Obx(() {
       final ts = controller.timeSignature.value;
       final active = controller.activeBeat.value;
@@ -357,8 +357,8 @@ class _TimeSignatureCard extends StatelessWidget {
   const _TimeSignatureCard({required this.controller});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
     return Obx(() => Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
@@ -441,8 +441,8 @@ class _TimeSignatureSelector extends StatelessWidget {
   const _TimeSignatureSelector({required this.controller});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
     return Obx(() {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -501,7 +501,7 @@ class _BpmSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final cs = Get.theme.colorScheme;
     return Container(
       padding:
           EdgeInsets.only(top: 4.h, left: 10.w, right: 10.w, bottom: 10.h),
@@ -619,8 +619,8 @@ class _PlayButton extends StatelessWidget {
   const _PlayButton({required this.controller});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
     return Obx(() {
       final playing = controller.isPlaying.value;
       return Container(
@@ -732,8 +732,8 @@ class _TapTempoButtonState extends State<_TapTempoButton>
   }
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
     return AnimatedBuilder(
       animation: _scaleAnim,
       builder: (context, child) => Transform.scale(
@@ -789,8 +789,8 @@ class _TapCounterLabel extends StatelessWidget {
   const _TapCounterLabel({required this.controller});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
     return Obx(() {
       final count = controller.tapCount.value;
       if (count == 0) {

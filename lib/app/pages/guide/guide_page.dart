@@ -6,8 +6,8 @@ class GuidePage extends GetView<dynamic> {
   const GuidePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
