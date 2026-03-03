@@ -20,7 +20,7 @@ import 'package:metronome_tap/app/admob/ads_rewarded.dart';
 import 'package:metronome_tap/app/bindings/app_binding.dart';
 import 'package:metronome_tap/app/routes/app_pages.dart';
 import 'package:metronome_tap/app/services/hive_service.dart';
-import 'package:metronome_tap/app/theme/app_theme.dart';
+import 'package:metronome_tap/app/theme/app_flex_theme.dart';
 import 'package:metronome_tap/app/translate/translate.dart';
 
 Future<void> main() async {
@@ -86,8 +86,8 @@ class MetronomeTapApp extends StatelessWidget {
       fallbackLocale: const Locale('en'),
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
+      theme: AppFlexTheme.light,
+      darkTheme: AppFlexTheme.dark,
       home: const Scaffold(body: SizedBox.shrink()),
     );
   }
@@ -117,8 +117,8 @@ class MetronomeTapApp extends StatelessWidget {
           defaultTransition: Transition.fadeIn,
           initialBinding: AppBinding(),
           themeMode: ThemeMode.system,
-          theme: AppTheme.light,
-          darkTheme: AppTheme.dark,
+          theme: AppFlexTheme.light,
+          darkTheme: AppFlexTheme.dark,
           scrollBehavior: ScrollBehavior().copyWith(overscroll: false),
           navigatorKey: Get.key,
           getPages: AppPages.routes,
