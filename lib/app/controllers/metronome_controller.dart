@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:vibration/vibration.dart';
 
+import 'package:metronome_tap/app/controllers/setting_controller.dart';
 import 'package:metronome_tap/app/services/hive_service.dart';
 
 class MetronomeController extends GetxController {
@@ -25,6 +27,8 @@ class MetronomeController extends GetxController {
   final hapticEnabled = true.obs;
   final isSoundEnabled = true.obs;
 
+  bool _hasVibrator = false;
+
   // Tap tempo
   final _tapTimes = <DateTime>[];
   final tapCount = 0.obs; // visible tap counter
@@ -37,6 +41,7 @@ class MetronomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    Vibration.hasVibrator().then((v) => _hasVibrator = v);
     _loadPrefs();
   }
 
@@ -54,6 +59,10 @@ class MetronomeController extends GetxController {
         HiveService.to.getAppData<bool>(_hapticKey) ?? true;
     isSoundEnabled.value =
         HiveService.to.getAppData<bool>(_soundKey) ?? true;
+    if (Get.isRegistered<SettingController>()) {
+      hapticEnabled.value = SettingController.to.hapticEnabled.value;
+      isSoundEnabled.value = SettingController.to.soundEnabled.value;
+    }
   }
 
   void _savePrefs() {
@@ -161,15 +170,22 @@ class MetronomeController extends GetxController {
     final next = (activeBeat.value + 1) % ts;
     activeBeat.value = next;
 
-    if (isSoundEnabled.value) {
+    final soundOn = Get.isRegistered<SettingController>()
+        ? SettingController.to.soundEnabled.value
+        : isSoundEnabled.value;
+    final hapticOn = Get.isRegistered<SettingController>()
+        ? SettingController.to.hapticEnabled.value
+        : hapticEnabled.value;
+
+    if (soundOn) {
       SystemSound.play(SystemSoundType.click);
     }
 
-    if (hapticEnabled.value) {
+    if (hapticOn && _hasVibrator) {
       if (next == 0) {
-        HapticFeedback.heavyImpact(); // Accent (downbeat)
+        Vibration.vibrate(duration: 200);
       } else {
-        HapticFeedback.mediumImpact();
+        Vibration.vibrate(duration: 100);
       }
     }
   }

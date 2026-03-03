@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -8,6 +7,7 @@ import 'package:metronome_tap/app/admob/ads_banner.dart';
 import 'package:metronome_tap/app/admob/ads_helper.dart';
 import 'package:metronome_tap/app/routes/app_pages.dart';
 import 'package:metronome_tap/app/controllers/metronome_controller.dart';
+import 'package:vibration/vibration.dart';
 
 class HomePage extends GetView<MetronomeController> {
   const HomePage({super.key});
@@ -723,7 +723,9 @@ class _TapTempoButtonState extends State<_TapTempoButton>
 
   void _onTapUp(TapUpDetails _) {
     _pressCtrl.reverse();
-    HapticFeedback.selectionClick();
+    Vibration.hasVibrator().then((v) {
+      if (v) Vibration.vibrate(duration: 30);
+    });
     widget.controller.onTap();
   }
 
