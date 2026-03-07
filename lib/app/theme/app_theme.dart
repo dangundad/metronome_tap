@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 abstract final class AppTheme {
   static const Color _textPrimary = Color(0xFF1D2938);
@@ -71,7 +72,7 @@ abstract final class AppTheme {
     );
 
     final InputBorder fieldBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r),
       borderSide: BorderSide(
         color: isDark ? _lineDark : _line,
         width: 0.9,
@@ -103,7 +104,7 @@ abstract final class AppTheme {
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           side: BorderSide(color: isDark ? _lineDark : _line, width: 0.9),
         ),
       ),
@@ -111,16 +112,16 @@ abstract final class AppTheme {
         iconColor: onText,
         textColor: onText,
         selectedColor: seed,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: mutedBg,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
         border: fieldBorder,
         enabledBorder: fieldBorder,
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           borderSide: BorderSide(color: seed, width: 1.4),
         ),
       ),
@@ -129,10 +130,10 @@ abstract final class AppTheme {
           elevation: 0,
           backgroundColor: seed,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
           textStyle: editorialText.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
           ),
         ),
       ),
@@ -140,10 +141,10 @@ abstract final class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: seed,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
           textStyle: editorialText.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
           ),
         ),
       ),
@@ -151,9 +152,9 @@ abstract final class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: onText,
           side: BorderSide(color: isDark ? _lineDark : _line),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
           ),
           textStyle: editorialText.titleSmall?.copyWith(fontWeight: FontWeight.w600),
         ),
@@ -161,9 +162,9 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: onText,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10.r),
           ),
           textStyle: editorialText.titleSmall,
         ),
@@ -172,7 +173,7 @@ abstract final class AppTheme {
         backgroundColor: seed,
         foregroundColor: Colors.white,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: cardColor,
@@ -180,7 +181,7 @@ abstract final class AppTheme {
         behavior: SnackBarBehavior.floating,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -199,7 +200,7 @@ abstract final class AppTheme {
         backgroundColor: cardColor,
         showDragHandle: true,
         shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
         ),
       ),
       tabBarTheme: TabBarThemeData(
@@ -221,13 +222,13 @@ abstract final class AppTheme {
           fontWeight: FontWeight.w700,
           letterSpacing: -0.2,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       ),
       popupMenuTheme: PopupMenuThemeData(
         color: cardColor,
         labelTextStyle: WidgetStatePropertyAll(editorialText.bodyMedium),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
         ),
       ),
       dropdownMenuTheme: DropdownMenuThemeData(
@@ -235,7 +236,7 @@ abstract final class AppTheme {
         menuStyle: MenuStyle(
           backgroundColor: WidgetStatePropertyAll(cardColor),
           shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
           ),
         ),
       ),
@@ -243,7 +244,7 @@ abstract final class AppTheme {
         style: MenuStyle(
           backgroundColor: WidgetStatePropertyAll(cardColor),
           shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
           ),
         ),
       ),
