@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:metronome_tap/app/admob/ads_helper.dart';
@@ -39,19 +38,20 @@ Future<void> main() async {
 
   // AdMob 초기화 (GDPR/CCPA 동의 → SDK 초기화)
   try {
-    await AdHelper.initializeAdConsent();
-
-    MobileAds.instance.initialize().then((status) {
-      status.adapterStatuses.forEach((key, value) {
+    final canRequestAds = await AdHelper.initializeConsentAndAds();
+    if (canRequestAds) {
+      final status = await AdHelper.currentInitializationStatus();
+      status?.adapterStatuses.forEach((key, value) {
         debugPrint('Adapter status for $key: ${value.description}');
       });
-    });
-    debugPrint('AdMob initialized successfully');
+      debugPrint('AdMob initialized successfully');
+    } else {
+      debugPrint('AdMob initialization skipped until consent is available');
+    }
   } catch (e) {
     debugPrint('AdMob initialization failed: $e');
   }
 
-  // Hive 초기화 (어댑터 등록 + Box 열기)
   await HiveService.init();
   Get.put<HiveService>(HiveService(), permanent: true);
 
