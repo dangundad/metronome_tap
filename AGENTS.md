@@ -1,106 +1,70 @@
-# CLAUDE.md - Metronome & BPM Tap
+# Metronome & BPM Tap 개발 가이드
 
-## 프로젝트 개요
-메트로놈 및 BPM 탭 측정 앱. 정확한 비트 스케줄링, 탭 템포 측정, 진동 피드백을 제공하는 음악 도구.
-- **패키지명**: `com.dangundad.metronometap`
-- **퍼블리셔**: DangunDad
-- **수익 모델**: 완전 무료 + AdMob 광고 (배너 + 전면 + 보상형)
+> 문서: `AGENTS.md`
+> This file provides guidance to coding agents working with this repository.
+> 최종 업데이트: 2026-03-08
+> 기준: 현재 앱 저장소 스캔 + `C:\Flutter_WorkSpace\Flutter_Plan\AGENTS.md` 포트폴리오 상태표
 
-## 기술 스택
-- **Flutter** 3.x / Dart 3.8+
-- **상태 관리**: GetX (`GetxController`, `.obs`, `Obx()`)
-- **로컬 저장**: Hive_CE (키-값 저장, HiveType 모델 없음)
-- **UI**: flutter_screenutil, flex_color_scheme (FlexScheme.redWine), google_fonts, lucide_icons_flutter
-- **광고**: google_mobile_ads + AppLovin/Pangle/Unity 미디에이션
-- **기타**: vibration, flutter_animate, firebase_core/analytics/crashlytics, in_app_purchase, in_app_review
+## 프로젝트 요약
+- 앱 번호: 36
+- Phase: 4
+- 상태: ✅ 기능구현
+- 난이도: ★☆☆
+- 광고 등급: 중
+- 프로젝트 폴더: `metronome_tap`
+- `pubspec` 이름: `metronome_tap`
+- Android 패키지: `com.dangundad.metronometap`
+- 버전: `1.0.0+1`
+- 핵심 기능: 40~280 BPM 슬라이더, 탭 BPM 측정, 박자 패턴, 진동 피드백
 
-## 개발 명령어
+## 공통 작업 원칙
+- 모든 텍스트 파일은 UTF-8로 유지하고, PowerShell에서 파일을 쓸 때는 `-Encoding UTF8`을 명시합니다.
+- AI/코드 어시스턴트의 설명, 진행 업데이트, 최종 답변은 기본적으로 한국어로 작성합니다.
+- Android 우선 프로젝트이며, 별도 요청 없이 iOS 전용 코드는 추가하지 않습니다.
+- 릴리스 빌드는 실행하지 않습니다. 일반 작업에서는 `flutter build apk`/`flutter build ios`를 사용하지 않습니다.
+- 코드 변경 후에는 반드시 `flutter analyze`와 `flutter test`를 실행해 결과를 확인합니다.
+- Hive `@HiveType` 모델을 추가하거나 수정했다면 `dart run build_runner build --delete-conflicting-outputs`를 실행합니다.
+- 상태 관리는 GetX, 로컬 저장은 Hive_CE 패턴을 유지하고 기존 네비게이션/영속성 구조를 임의로 바꾸지 않습니다.
+- Windows 표준 경로를 사용하고 WSL 경로(`/mnt/c/...`)는 사용하지 않습니다.
+- `2>nul`, `>nul` 리다이렉션은 사용하지 않으며, `nul` 파일이 생기면 정리합니다.
+
+## 빠른 명령어
 ```bash
+cd C:\Flutter_WorkSpace\metronome_tap
 flutter pub get
+dart run build_runner build --delete-conflicting-outputs
 flutter analyze
+flutter test
 flutter run
 ```
 
-## 아키텍처 (프로젝트 구조)
-```
-lib/
-├── main.dart                          # 앱 진입점
-├── hive_registrar.g.dart              # Hive 어댑터 등록 (스텁)
-├── app/
-│   ├── admob/                         # 광고 (배너/전면/보상형)
-│   ├── bindings/app_binding.dart      # GetX 바인딩
-│   ├── controllers/
-│   │   ├── metronome_controller.dart  # 메트로놈 핵심 로직
-│   │   ├── history_controller.dart    # 기록 관리
-│   │   ├── home_controller.dart       # 홈 화면
-│   │   ├── premium_controller.dart    # 프리미엄
-│   │   ├── setting_controller.dart    # 설정
-│   │   └── stats_controller.dart      # 통계
-│   ├── pages/
-│   │   ├── guide/guide_page.dart      # 가이드/도움말
-│   │   ├── history/history_page.dart
-│   │   ├── home/home_page.dart        # 메인 화면 (메트로놈 + 탭 템포)
-│   │   ├── premium/
-│   │   ├── settings/settings_page.dart
-│   │   └── stats/stats_page.dart
-│   ├── routes/
-│   ├── services/
-│   │   ├── activity_log_service.dart
-│   │   ├── app_rating_service.dart
-│   │   ├── hive_service.dart
-│   │   └── purchase_service.dart
-│   ├── theme/
-│   │   ├── app_flex_theme.dart
-│   │   └── app_theme.dart             # 추가 테마 설정
-│   ├── translate/translate.dart
-│   └── utils/app_constants.dart
-```
+## 현재 의존성 하이라이트
+- 기반: `get` ^4.7.3, `hive_ce` ^2.19.3, `hive_ce_flutter` ^2.3.4, `path_provider` ^2.1.5, `intl` ^0.20.2, `uuid` ^4.5.3
+- UI/UX: `flutter_screenutil` ^5.9.3, `flex_color_scheme` ^8.4.0, `google_fonts` ^6.3.2, `lucide_icons_flutter` ^3.1.10, `flutter_animate` ^4.5.2
+- 수익화/운영: `google_mobile_ads` ^6.0.0, `gma_mediation_applovin` ^2.5.1, `gma_mediation_pangle` ^3.5.0, `gma_mediation_unity` ^1.6.2, `in_app_purchase` ^3.2.3, `in_app_review` ^2.0.11, `rate_my_app` ^2.3.2, `firebase_core` ^4.4.0, `firebase_analytics` ^12.1.2, `firebase_crashlytics` ^5.0.7, `device_info_plus` ^12.3.0, `package_info_plus` ^9.0.0, `permission_handler` ^12.0.1, `share_plus` ^12.0.1, `url_launcher` ^6.3.2, `wakelock_plus` ^1.4.0, `vibration` ^3.1.8
 
-## 메트로놈 핵심 로직
-### BPM 범위
-- 최소: 40 BPM (Largo)
-- 최대: 280 BPM (Prestissimo)
+## 현재 코드 구조
+- `lib/app` 디렉터리: `admob`, `bindings`, `controllers`, `data`, `pages`, `routes`, `services`, `theme`, `translate`, `utils`, `widgets`
+- `bindings`: `app_binding.dart`
+- `routes`: `app_pages.dart`, `app_routes.dart`
+- `controllers`: `history_controller.dart`, `home_controller.dart`, `metronome_controller.dart`, `premium_controller.dart`, `setting_controller.dart`, `stats_controller.dart`
+- 기능 중심 컨트롤러: `metronome_controller`
+- `services`: `activity_log_service.dart`, `app_rating_service.dart`, `hive_service.dart`, `purchase_service.dart`
+- 기능 중심 서비스: 없음
+- `pages`: `guide`, `history`, `home`, `premium`, `settings`, `stats`
+- `widgets`: 없음
+- `mixins`: 없음
+- `utils`: `app_constants.dart`
+- `translate`: `translate.dart`
+- `theme`: `app_flex_theme.dart`, `app_theme.dart`
+- `data/models`: 없음
+- `data/enums`: 없음
+- `data/constants`: 없음
+- `data` 루트 파일: 없음
+- `assets`: `data`, `fonts`, `images`
+- `tests`: 1개: `test/widget_test.dart`
 
-### 템포 라벨
-| BPM 범위 | 라벨 |
-|----------|------|
-| < 60 | Largo |
-| 60-65 | Larghetto |
-| 66-75 | Adagio |
-| 76-107 | Andante |
-| 108-119 | Moderato |
-| 120-155 | Allegro |
-| 156-175 | Vivace |
-| 176-199 | Presto |
-| 200+ | Prestissimo |
-
-### 비트 스케줄링 (Drift-Free)
-- 절대 시간 기반 스케줄링: `_nextBeatTime`을 wall-clock 기준으로 추적
-- 각 비트 후 정확히 1 interval만큼 `_nextBeatTime`을 전진
-- 이벤트 루프 지연이 발생해도 다음 간격을 보정하여 누적 드리프트 방지
-- 인터벌 계산: `Duration(microseconds: (60000000 / bpm).round())`
-
-### 박자 (Time Signature)
-- 기본값: 4/4 박자
-- 다운비트(beat 0): 강한 진동 (200ms)
-- 일반 비트: 약한 진동 (100ms)
-- `SystemSound.play(SystemSoundType.click)` 사운드 출력
-
-### 탭 템포 (Tap BPM)
-- 최근 8회 탭의 평균 간격으로 BPM 계산
-- 3초간 탭이 없으면 히스토리 초기화
-- `tapCount.value`로 현재 탭 횟수 표시
-
-## 저장 데이터 (Hive 키-값)
-| 키 | 타입 | 설명 |
-|----|------|------|
-| metro_bpm | int | 마지막 BPM |
-| metro_time_sig | int | 박자 |
-| metro_haptic | bool | 진동 활성화 |
-| metro_sound | bool | 사운드 활성화 |
-
-## 개발 가이드라인
-- HiveType 모델이 없으므로 `hive_registrar.g.dart`는 스텁 파일
-- BPM 변경 시 재생 중이면 `_rescheduleFromNow()`로 부드럽게 전환
-- SettingController 등록 여부 확인 후 haptic/sound 설정 참조
-- Timer 정리: `onClose()`에서 `_beatTimer`, `_tapResetTimer` 반드시 cancel
+## 문서 유지 규칙
+- 새 페이지나 바인딩을 추가하면 이 문서의 `pages`/`bindings` 요약도 함께 갱신합니다.
+- 의존성 추가/제거, Android 패키지명 변경, 테스트 확장은 이 문서에 바로 반영합니다.
+- 포트폴리오 상태가 바뀌면 메타 레포 `AGENTS.md`, `CLAUDE.md`, 관련 `docs/*.md`와 함께 동기화합니다.
