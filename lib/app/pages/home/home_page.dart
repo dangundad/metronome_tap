@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -7,7 +8,6 @@ import 'package:metronome_tap/app/admob/ads_banner.dart';
 import 'package:metronome_tap/app/admob/ads_helper.dart';
 import 'package:metronome_tap/app/routes/app_pages.dart';
 import 'package:metronome_tap/app/controllers/metronome_controller.dart';
-import 'package:vibration/vibration.dart';
 
 class HomePage extends GetView<MetronomeController> {
   const HomePage({super.key});
@@ -405,10 +405,7 @@ class _TimeSignatureCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'beat_pattern'.tr.isNotEmpty &&
-                            'beat_pattern'.tr != 'beat_pattern'
-                        ? 'beat_pattern'.tr
-                        : 'Beat Pattern',
+                    'beat_pattern'.tr,
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: cs.onPrimaryContainer.withValues(alpha: 0.7),
@@ -723,9 +720,7 @@ class _TapTempoButtonState extends State<_TapTempoButton>
 
   void _onTapUp(TapUpDetails _) {
     _pressCtrl.reverse();
-    Vibration.hasVibrator().then((v) {
-      if (v) Vibration.vibrate(duration: 30);
-    });
+    HapticFeedback.lightImpact();
     widget.controller.onTap();
   }
 

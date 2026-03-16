@@ -38,6 +38,7 @@ class RewardedAdManager extends GetxController {
             },
             onAdDismissedFullScreenContent: (ad) {
               isAdShowing.value = false;
+              ad.dispose();
               _rewardedAd = null;
               isAdReady.value = false;
               loadAd();
@@ -45,6 +46,7 @@ class RewardedAdManager extends GetxController {
             onAdFailedToShowFullScreenContent: (ad, error) {
               debugPrint('Rewarded ad failed to show: $error');
               isAdShowing.value = false;
+              ad.dispose();
               _rewardedAd = null;
               isAdReady.value = false;
             },
@@ -77,6 +79,7 @@ class RewardedAdManager extends GetxController {
       },
       onAdDismissedFullScreenContent: (ad) {
         isAdShowing.value = false;
+        ad.dispose();
         _rewardedAd = null;
         isAdReady.value = false;
         onAdClosed?.call();
@@ -85,6 +88,7 @@ class RewardedAdManager extends GetxController {
       onAdFailedToShowFullScreenContent: (ad, error) {
         debugPrint('Rewarded ad failed to show: $error');
         isAdShowing.value = false;
+        ad.dispose();
         _rewardedAd = null;
         isAdReady.value = false;
         onAdClosed?.call();

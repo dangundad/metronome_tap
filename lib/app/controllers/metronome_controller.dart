@@ -29,10 +29,16 @@ class MetronomeController extends GetxController {
 
   bool _hasVibrator = false;
 
+  // Cached setting references (avoid repeated Get.isRegistered on hot path)
+  SettingController? _settingCtrl;
+
   // Tap tempo
   final _tapTimes = <DateTime>[];
   final tapCount = 0.obs; // visible tap counter
   Timer? _tapResetTimer;
+
+  // Debounce timer for saving BPM during slider drag
+  Timer? _saveBpmDebounce;
 
   // Absolute-time beat scheduler (drift-free)
   Timer? _beatTimer;
@@ -41,7 +47,8 @@ class MetronomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    Vibration.hasVibrator().then((v) => _hasVibrator = v);
+    _initVibrator();
+    _cacheSettingController();
     _loadPrefs();
   }
 
@@ -49,7 +56,22 @@ class MetronomeController extends GetxController {
   void onClose() {
     _beatTimer?.cancel();
     _tapResetTimer?.cancel();
+    _saveBpmDebounce?.cancel();
     super.onClose();
+  }
+
+  /// Initialize vibrator check once and await it properly.
+  Future<void> _initVibrator() async {
+    final result = await Vibration.hasVibrator();
+    _hasVibrator = result;
+  }
+
+  /// Cache the SettingController reference so _fireBeat doesn't need
+  /// Get.isRegistered on every tick.
+  void _cacheSettingController() {
+    if (Get.isRegistered<SettingController>()) {
+      _settingCtrl = SettingController.to;
+    }
   }
 
   void _loadPrefs() {
@@ -59,9 +81,11 @@ class MetronomeController extends GetxController {
         HiveService.to.getAppData<bool>(_hapticKey) ?? true;
     isSoundEnabled.value =
         HiveService.to.getAppData<bool>(_soundKey) ?? true;
-    if (Get.isRegistered<SettingController>()) {
-      hapticEnabled.value = SettingController.to.hapticEnabled.value;
-      isSoundEnabled.value = SettingController.to.soundEnabled.value;
+
+    // Sync from SettingController if available
+    if (_settingCtrl != null) {
+      hapticEnabled.value = _settingCtrl!.hapticEnabled.value;
+      isSoundEnabled.value = _settingCtrl!.soundEnabled.value;
     }
   }
 
@@ -72,10 +96,20 @@ class MetronomeController extends GetxController {
     HiveService.to.setAppData(_soundKey, isSoundEnabled.value);
   }
 
+  /// Save BPM with debounce to avoid excessive Hive writes during slider drag.
+  void _saveBpmDebounced() {
+    _saveBpmDebounce?.cancel();
+    _saveBpmDebounce = Timer(const Duration(milliseconds: 500), () {
+      HiveService.to.setAppData(_bpmKey, bpm.value);
+    });
+  }
+
   // ─── Controls ─────────────────────────────────────────
   void toggle() => isPlaying.value ? stop() : start();
 
   void start() {
+    // Re-cache in case SettingController was registered after onInit
+    _cacheSettingController();
     isPlaying.value = true;
     activeBeat.value = -1;
     _startScheduler();
@@ -93,11 +127,10 @@ class MetronomeController extends GetxController {
     bpm.value = value.clamp(_minBpm, _maxBpm);
     if (isPlaying.value) {
       // Reschedule without firing an extra immediate beat.
-      // Compute the new next-beat time from now (preserving beat phase
-      // as best as possible at the new tempo).
       _rescheduleFromNow();
     }
-    _savePrefs();
+    // Debounced save during slider interaction
+    _saveBpmDebounced();
   }
 
   void setTimeSignature(int beats) {
@@ -157,7 +190,7 @@ class MetronomeController extends GetxController {
     _fireBeat();
 
     // Advance the absolute target by exactly one interval regardless of when
-    // this callback actually ran — this prevents cumulative drift.
+    // this callback actually ran -- this prevents cumulative drift.
     _nextBeatTime = _nextBeatTime!.add(_intervalDuration);
     _scheduleNextTimer();
   }
@@ -170,12 +203,9 @@ class MetronomeController extends GetxController {
     final next = (activeBeat.value + 1) % ts;
     activeBeat.value = next;
 
-    final soundOn = Get.isRegistered<SettingController>()
-        ? SettingController.to.soundEnabled.value
-        : isSoundEnabled.value;
-    final hapticOn = Get.isRegistered<SettingController>()
-        ? SettingController.to.hapticEnabled.value
-        : hapticEnabled.value;
+    // Use cached controller reference instead of Get.isRegistered per tick
+    final soundOn = _settingCtrl?.soundEnabled.value ?? isSoundEnabled.value;
+    final hapticOn = _settingCtrl?.hapticEnabled.value ?? hapticEnabled.value;
 
     if (soundOn) {
       SystemSound.play(SystemSoundType.click);
@@ -210,16 +240,43 @@ class MetronomeController extends GetxController {
     tapCount.value = _tapTimes.length;
 
     if (_tapTimes.length >= 2) {
-      int totalMs = 0;
+      // Compute intervals in milliseconds
+      final intervals = <int>[];
       for (int i = 1; i < _tapTimes.length; i++) {
-        totalMs +=
-            _tapTimes[i].difference(_tapTimes[i - 1]).inMilliseconds;
+        intervals.add(
+            _tapTimes[i].difference(_tapTimes[i - 1]).inMilliseconds);
       }
-      final avgInterval = totalMs / (_tapTimes.length - 1);
-      final newBpm =
-          (60000 / avgInterval).round().clamp(_minBpm, _maxBpm);
-      setBpm(newBpm);
+
+      // Filter outliers: discard intervals that deviate more than 50%
+      // from the median to avoid erratic taps skewing the result.
+      final filteredIntervals = _filterOutliers(intervals);
+
+      if (filteredIntervals.isNotEmpty) {
+        final avgInterval =
+            filteredIntervals.reduce((a, b) => a + b) / filteredIntervals.length;
+        if (avgInterval > 0) {
+          final newBpm =
+              (60000 / avgInterval).round().clamp(_minBpm, _maxBpm);
+          setBpm(newBpm);
+        }
+      }
     }
+  }
+
+  /// Filter outlier intervals using median absolute deviation.
+  /// Discard intervals that deviate more than 50% from the median.
+  List<int> _filterOutliers(List<int> intervals) {
+    if (intervals.length < 3) return intervals;
+
+    final sorted = List<int>.from(intervals)..sort();
+    final median = sorted[sorted.length ~/ 2];
+
+    // Threshold: 50% of median
+    final threshold = median * 0.5;
+
+    return intervals
+        .where((iv) => (iv - median).abs() <= threshold)
+        .toList();
   }
 
   // ─── BPM helpers ──────────────────────────────────────
@@ -231,8 +288,9 @@ class MetronomeController extends GetxController {
     if (b < 60) return 'Largo';
     if (b < 66) return 'Larghetto';
     if (b < 76) return 'Adagio';
-    if (b < 108) return 'Andante';
-    if (b < 120) return 'Moderato';
+    if (b < 92) return 'Andante';
+    if (b < 108) return 'Moderato';
+    if (b < 120) return 'Allegro moderato';
     if (b < 156) return 'Allegro';
     if (b < 176) return 'Vivace';
     if (b < 200) return 'Presto';
