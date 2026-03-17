@@ -104,8 +104,20 @@ class Languages extends Translations {
       'guide_tip_4_title': '4) Review history',
       'guide_tip_4_desc':
           'Check your metronome usage in History and Stats.',
+      'guide_tip_5_title': '5) Subdivisions',
+      'guide_tip_5_desc':
+          'Split each beat into eighth notes, triplets, or sixteenth notes for precise practice.',
+      'guide_tip_6_title': '6) Accent patterns',
+      'guide_tip_6_desc':
+          'Tap any beat indicator to cycle through strong, normal, and mute accents.',
+      'guide_tip_7_title': '7) Drag to change BPM',
+      'guide_tip_7_desc':
+          'Swipe up or down on the BPM display to quickly adjust the tempo.',
       'guide_footer':
           'You can adjust everything in one tap from Home and use it immediately.',
+      'subdivision': 'Subdivision',
+      'drag_bpm_hint': '↕ Drag to adjust',
+      'taps_unit': ' taps',
     },
     'ko': {
       'settings': '설정',
@@ -195,7 +207,16 @@ class Languages extends Translations {
       'guide_tip_3_desc': '진동을 켜거나 끄고, 원하는 템포와 박자를 그대로 유지해요.',
       'guide_tip_4_title': '4) 기록 확인',
       'guide_tip_4_desc': '기록과 통계 페이지에서 메트로놈 사용 현황을 볼 수 있어요.',
+      'guide_tip_5_title': '5) 서브디비전',
+      'guide_tip_5_desc': '각 비트를 8분음표, 3연음, 16분음표로 나눠 정밀하게 연습해요.',
+      'guide_tip_6_title': '6) 악센트 패턴',
+      'guide_tip_6_desc': '비트 표시기를 탭하면 강·보통·음소거 악센트를 바꿀 수 있어요.',
+      'guide_tip_7_title': '7) 드래그로 BPM 변경',
+      'guide_tip_7_desc': 'BPM 표시 영역을 위아래로 스와이프하면 빠르게 템포를 조절할 수 있어요.',
       'guide_footer': '홈에서 한 번의 탭으로 모든 설정을 바꾸고 바로 사용할 수 있어요.',
+      'subdivision': '서브디비전',
+      'drag_bpm_hint': '↕ 드래그하여 조절',
+      'taps_unit': '탭',
     },
   };
 }

@@ -165,137 +165,174 @@ class HomePage extends GetView<MetronomeController> {
   }
 }
 
-// BPM Display — gradient card with enhanced typography
-class _BpmDisplay extends StatelessWidget {
+// ─── BPM Display with vertical drag gesture ─────────────
+class _BpmDisplay extends StatefulWidget {
   final MetronomeController controller;
 
   const _BpmDisplay({required this.controller});
 
   @override
-  Widget build(BuildContext _) {
+  State<_BpmDisplay> createState() => _BpmDisplayState();
+}
+
+class _BpmDisplayState extends State<_BpmDisplay> {
+  double _dragAccumulator = 0;
+
+  void _onVerticalDragUpdate(DragUpdateDetails details) {
+    _dragAccumulator -= details.primaryDelta ?? 0;
+    while (_dragAccumulator >= 10) {
+      widget.controller.setBpm(widget.controller.bpm.value + 1);
+      _dragAccumulator -= 10;
+    }
+    while (_dragAccumulator <= -10) {
+      widget.controller.setBpm(widget.controller.bpm.value - 1);
+      _dragAccumulator += 10;
+    }
+  }
+
+  void _onVerticalDragEnd(DragEndDetails _) {
+    _dragAccumulator = 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final cs = Get.theme.colorScheme;
-    return Obx(() {
-      final isPlaying = controller.isPlaying.value;
-      return AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isPlaying
-                ? [
-                    cs.primary.withValues(alpha: 0.25),
-                    cs.primaryContainer,
-                    cs.secondaryContainer.withValues(alpha: 0.7),
-                  ]
-                : [
-                    cs.primaryContainer,
-                    cs.secondaryContainer.withValues(alpha: 0.7),
-                  ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(24.r),
-          border: Border.all(
-            color: isPlaying
-                ? cs.primary.withValues(alpha: 0.5)
-                : cs.outline.withValues(alpha: 0.15),
-            width: isPlaying ? 2 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
+    return GestureDetector(
+      onVerticalDragUpdate: _onVerticalDragUpdate,
+      onVerticalDragEnd: _onVerticalDragEnd,
+      child: Obx(() {
+        final isPlaying = widget.controller.isPlaying.value;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isPlaying
+                  ? [
+                      cs.primary.withValues(alpha: 0.25),
+                      cs.primaryContainer,
+                      cs.secondaryContainer.withValues(alpha: 0.7),
+                    ]
+                  : [
+                      cs.primaryContainer,
+                      cs.secondaryContainer.withValues(alpha: 0.7),
+                    ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24.r),
+            border: Border.all(
               color: isPlaying
-                  ? cs.primary.withValues(alpha: 0.28)
-                  : cs.primary.withValues(alpha: 0.12),
-              blurRadius: isPlaying ? 28 : 16,
-              offset: const Offset(0, 6),
+                  ? cs.primary.withValues(alpha: 0.5)
+                  : cs.outline.withValues(alpha: 0.15),
+              width: isPlaying ? 2 : 1,
             ),
-          ],
-        ),
-        child: Column(
-          children: [
-            // BPM number
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 150),
-              transitionBuilder: (child, anim) => ScaleTransition(
-                scale:
-                    CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
-                child: child,
-              ),
-              child: Text(
-                '${controller.bpm.value}',
-                key: ValueKey(controller.bpm.value),
-                style: TextStyle(
-                  fontSize: 86.sp,
-                  fontWeight: FontWeight.w900,
-                  color: isPlaying ? cs.primary : cs.onSurface,
-                  height: 1,
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
-            SizedBox(height: 4.h),
-            // BPM label with decorative line
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 24.w,
-                  height: 1.5,
-                  decoration: BoxDecoration(
-                    color: cs.onSurfaceVariant.withValues(alpha: 0.4),
-                    borderRadius: BorderRadius.circular(1.r),
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  'bpm'.tr,
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w700,
-                    color: cs.onSurfaceVariant,
-                    letterSpacing: 3,
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Container(
-                  width: 24.w,
-                  height: 1.5,
-                  decoration: BoxDecoration(
-                    color: cs.onSurfaceVariant.withValues(alpha: 0.4),
-                    borderRadius: BorderRadius.circular(1.r),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10.h),
-            // Tempo label badge
-            Container(
-              padding:
-                  EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
-              decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
                 color: isPlaying
-                    ? cs.primary.withValues(alpha: 0.18)
-                    : cs.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20.r),
+                    ? cs.primary.withValues(alpha: 0.28)
+                    : cs.primary.withValues(alpha: 0.12),
+                blurRadius: isPlaying ? 28 : 16,
+                offset: const Offset(0, 6),
               ),
-              child: Text(
-                controller.tempoLabel,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  color: isPlaying ? cs.primary : cs.onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w700,
+            ],
+          ),
+          child: Column(
+            children: [
+              // BPM number
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 150),
+                transitionBuilder: (child, anim) => ScaleTransition(
+                  scale: CurvedAnimation(
+                      parent: anim, curve: Curves.easeOutBack),
+                  child: child,
+                ),
+                child: Text(
+                  '${widget.controller.bpm.value}',
+                  key: ValueKey(widget.controller.bpm.value),
+                  style: TextStyle(
+                    fontSize: 86.sp,
+                    fontWeight: FontWeight.w900,
+                    color: isPlaying ? cs.primary : cs.onSurface,
+                    height: 1,
+                    letterSpacing: 1,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    });
+              SizedBox(height: 4.h),
+              // BPM label with decorative line
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 24.w,
+                    height: 1.5,
+                    decoration: BoxDecoration(
+                      color: cs.onSurfaceVariant.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(1.r),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    'bpm'.tr,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w700,
+                      color: cs.onSurfaceVariant,
+                      letterSpacing: 3,
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Container(
+                    width: 24.w,
+                    height: 1.5,
+                    decoration: BoxDecoration(
+                      color: cs.onSurfaceVariant.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(1.r),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.h),
+              // Tempo label badge
+              Container(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+                decoration: BoxDecoration(
+                  color: isPlaying
+                      ? cs.primary.withValues(alpha: 0.18)
+                      : cs.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  widget.controller.tempoLabel,
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: isPlaying ? cs.primary : cs.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              SizedBox(height: 6.h),
+              // Drag hint
+              Text(
+                'drag_bpm_hint'.tr,
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  color: cs.onSurfaceVariant.withValues(alpha: 0.4),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
   }
 }
 
+// ─── Beat Indicator with accent control and sub-beat dots ──
 class _BeatIndicator extends StatelessWidget {
   final MetronomeController controller;
 
@@ -307,50 +344,141 @@ class _BeatIndicator extends StatelessWidget {
     return Obx(() {
       final ts = controller.timeSignature.value;
       final active = controller.activeBeat.value;
+      final activeSub = controller.activeSubBeat.value;
       final isPlaying = controller.isPlaying.value;
+      final sub = controller.subdivision.value;
 
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(ts, (i) {
-          final isActive = isPlaying && active == i;
-          final isAccent = i == 0;
-          final activeColor = isAccent ? cs.primary : cs.secondary;
+      // Adaptive sizing based on total elements
+      final totalElements = ts + (sub > 1 ? ts * (sub - 1) : 0);
+      final mainSize = totalElements > 14 ? 28.r : 36.r;
+      final activeSize = totalElements > 14 ? 32.r : 42.r;
+      final numFontSize = totalElements > 14 ? 11.sp : 14.sp;
 
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 100),
-            margin: EdgeInsets.symmetric(horizontal: 6.w),
-            width: isActive ? (isAccent ? 44.r : 34.r) : 24.r,
-            height: isActive ? (isAccent ? 44.r : 34.r) : 24.r,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isActive
-                  ? activeColor
-                  : isAccent
-                      ? cs.primaryContainer
-                      : cs.surfaceContainerHighest,
-              boxShadow: isActive
-                  ? [
-                      BoxShadow(
-                        color: activeColor.withValues(alpha: 0.7),
-                        blurRadius: isAccent ? 20 : 14,
-                        spreadRadius: isAccent ? 5 : 3,
+      final children = <Widget>[];
+
+      for (int i = 0; i < ts; i++) {
+        final isActive = isPlaying && active == i && activeSub == 0;
+        final accent = i < controller.accents.length
+            ? controller.accents[i]
+            : BeatAccent.normal;
+
+        // Main beat dot (tappable to toggle accent)
+        children.add(
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              controller.toggleAccent(i);
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 100),
+              width: isActive ? activeSize : mainSize,
+              height: isActive ? activeSize : mainSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _beatColor(accent, isActive, cs),
+                border: accent == BeatAccent.normal && !isActive
+                    ? Border.all(color: cs.secondary, width: 2)
+                    : null,
+                boxShadow: isActive
+                    ? [
+                        BoxShadow(
+                          color: _beatGlowColor(accent, cs),
+                          blurRadius: 18,
+                          spreadRadius: 4,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Center(
+                child: accent == BeatAccent.mute
+                    ? Icon(
+                        Icons.close_rounded,
+                        size: totalElements > 14 ? 14.r : 16.r,
+                        color: cs.onSurfaceVariant,
+                      )
+                    : Text(
+                        '${i + 1}',
+                        style: TextStyle(
+                          fontSize: numFontSize,
+                          fontWeight: FontWeight.w700,
+                          color: isActive || accent == BeatAccent.strong
+                              ? cs.onPrimary
+                              : cs.onSurface,
+                        ),
                       ),
-                      BoxShadow(
-                        color: activeColor.withValues(alpha: 0.3),
-                        blurRadius: isAccent ? 34 : 22,
-                        spreadRadius: isAccent ? 7 : 4,
-                      ),
-                    ]
-                  : null,
+              ),
             ),
-          );
-        }),
+          ),
+        );
+
+        // Sub-beat dots after each beat
+        if (sub > 1) {
+          for (int s = 1; s < sub; s++) {
+            final isSubActive = isPlaying && active == i && activeSub == s;
+            children.add(
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 80),
+                margin: EdgeInsets.symmetric(horizontal: 1.w),
+                width: isSubActive ? 10.r : 6.r,
+                height: isSubActive ? 10.r : 6.r,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSubActive
+                      ? cs.tertiary
+                      : cs.onSurfaceVariant.withValues(alpha: 0.25),
+                  boxShadow: isSubActive
+                      ? [
+                          BoxShadow(
+                            color: cs.tertiary.withValues(alpha: 0.5),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                          ),
+                        ]
+                      : null,
+                ),
+              ),
+            );
+          }
+        }
+      }
+
+      return Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 6.w,
+        runSpacing: 8.h,
+        children: children,
       );
     });
   }
+
+  Color _beatColor(BeatAccent accent, bool isActive, ColorScheme cs) {
+    if (isActive) {
+      return accent == BeatAccent.strong ? cs.primary : cs.secondary;
+    }
+    switch (accent) {
+      case BeatAccent.strong:
+        return cs.primaryContainer;
+      case BeatAccent.normal:
+        return Colors.transparent;
+      case BeatAccent.mute:
+        return cs.surfaceContainerHighest;
+    }
+  }
+
+  Color _beatGlowColor(BeatAccent accent, ColorScheme cs) {
+    switch (accent) {
+      case BeatAccent.strong:
+        return cs.primary.withValues(alpha: 0.6);
+      case BeatAccent.normal:
+        return cs.secondary.withValues(alpha: 0.5);
+      case BeatAccent.mute:
+        return Colors.transparent;
+    }
+  }
 }
 
-// Time Signature Selector wrapped in a gradient stats card
+// ─── Time Signature + Subdivision Card ──────────────────
 class _TimeSignatureCard extends StatelessWidget {
   final MetronomeController controller;
 
@@ -360,78 +488,142 @@ class _TimeSignatureCard extends StatelessWidget {
   Widget build(BuildContext _) {
     final cs = Get.theme.colorScheme;
     return Obx(() => Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            cs.primaryContainer,
-            cs.secondaryContainer.withValues(alpha: 0.7),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [
-          BoxShadow(
-            color: cs.primary.withValues(alpha: 0.12),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40.r,
-                height: 40.r,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: cs.onPrimaryContainer.withValues(alpha: 0.12),
-                ),
-                child: Center(
-                  child: Icon(
-                    LucideIcons.music,
-                    size: 20.r,
-                    color: cs.onPrimaryContainer,
-                  ),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'beat_pattern'.tr,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: cs.onPrimaryContainer.withValues(alpha: 0.7),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    '${controller.timeSignature.value}/4',
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w800,
-                      color: cs.onPrimaryContainer,
-                    ),
-                  ),
-                ],
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                cs.primaryContainer,
+                cs.secondaryContainer.withValues(alpha: 0.7),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20.r),
+            boxShadow: [
+              BoxShadow(
+                color: cs.primary.withValues(alpha: 0.12),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
-          SizedBox(height: 14.h),
-          _TimeSignatureSelector(controller: controller),
-        ],
-      ),
-    ));
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Time signature header
+              Row(
+                children: [
+                  Container(
+                    width: 40.r,
+                    height: 40.r,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: cs.onPrimaryContainer.withValues(alpha: 0.12),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        LucideIcons.music,
+                        size: 20.r,
+                        color: cs.onPrimaryContainer,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'beat_pattern'.tr,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color:
+                              cs.onPrimaryContainer.withValues(alpha: 0.7),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        controller.tsLabel,
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w800,
+                          color: cs.onPrimaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 14.h),
+              _TimeSignatureSelector(controller: controller),
+              SizedBox(height: 16.h),
+              // Divider
+              Container(
+                height: 1,
+                color: cs.onPrimaryContainer.withValues(alpha: 0.12),
+              ),
+              SizedBox(height: 14.h),
+              // Subdivision header
+              Row(
+                children: [
+                  Container(
+                    width: 40.r,
+                    height: 40.r,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: cs.onPrimaryContainer.withValues(alpha: 0.12),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.graphic_eq_rounded,
+                        size: 20.r,
+                        color: cs.onPrimaryContainer,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'subdivision'.tr,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color:
+                              cs.onPrimaryContainer.withValues(alpha: 0.7),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        _subdivisionLabel(),
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w800,
+                          color: cs.onPrimaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.h),
+              _SubdivisionSelector(controller: controller),
+            ],
+          ),
+        ));
+  }
+
+  String _subdivisionLabel() {
+    return switch (controller.subdivision.value) {
+      2 => '♪♪',
+      3 => '♪♪♪',
+      4 => '♬♬',
+      _ => '♩',
+    };
   }
 }
 
+// Time Signature selector with 6 options including 5/4 and 7/8
 class _TimeSignatureSelector extends StatelessWidget {
   final MetronomeController controller;
 
@@ -441,51 +633,112 @@ class _TimeSignatureSelector extends StatelessWidget {
   Widget build(BuildContext _) {
     final cs = Get.theme.colorScheme;
     return Obx(() {
+      return Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 8.w,
+        runSpacing: 8.h,
+        children: MetronomeController.tsOptions.map((ts) {
+          final beats = ts.$1;
+          final denom = ts.$2;
+          final isSelected = controller.timeSignature.value == beats &&
+              controller.timeSigDenom.value == denom;
+          return GestureDetector(
+            onTap: () => controller.setTimeSignature(beats, denom),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 170),
+              padding:
+                  EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? cs.primary
+                    : cs.surfaceContainerHigh.withValues(alpha: 0.85),
+                borderRadius: BorderRadius.circular(14.r),
+                border: Border.all(
+                  color: isSelected ? cs.primary : Colors.transparent,
+                  width: 2,
+                ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: cs.primary.withValues(alpha: 0.30),
+                          blurRadius: 12,
+                          spreadRadius: 0.5,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Text(
+                '$beats/$denom',
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                  color: isSelected ? cs.onPrimary : cs.onSurface,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      );
+    });
+  }
+}
+
+// Subdivision selector: quarter, eighth, triplet, sixteenth
+class _SubdivisionSelector extends StatelessWidget {
+  final MetronomeController controller;
+
+  const _SubdivisionSelector({required this.controller});
+
+  static const _labels = ['♩', '♪♪', '♪♪♪', '♬♬'];
+  static const _values = [1, 2, 3, 4];
+
+  @override
+  Widget build(BuildContext _) {
+    final cs = Get.theme.colorScheme;
+    return Obx(() {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [2, 3, 4, 6].map((ts) {
-          final isSelected = controller.timeSignature.value == ts;
+        children: List.generate(4, (i) {
+          final isSelected = controller.subdivision.value == _values[i];
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 4.w),
             child: GestureDetector(
-              onTap: () => controller.setTimeSignature(ts),
+              onTap: () => controller.setSubdivision(_values[i]),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 170),
-                padding: EdgeInsets.symmetric(
-                    horizontal: 16.w, vertical: 10.h),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? cs.primary
+                      ? cs.secondary
                       : cs.surfaceContainerHigh.withValues(alpha: 0.85),
-                  borderRadius: BorderRadius.circular(14.r),
+                  borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
-                    color: isSelected
-                        ? cs.primary
-                        : Colors.transparent,
+                    color: isSelected ? cs.secondary : Colors.transparent,
                     width: 2,
                   ),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: cs.primary.withValues(alpha: 0.30),
-                            blurRadius: 12,
+                            color: cs.secondary.withValues(alpha: 0.30),
+                            blurRadius: 10,
                             spreadRadius: 0.5,
                           ),
                         ]
                       : null,
                 ),
                 child: Text(
-                  '$ts/4',
+                  _labels[i],
                   style: TextStyle(
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    color: isSelected ? cs.onPrimary : cs.onSurface,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? cs.onSecondary : cs.onSurface,
                   ),
                 ),
               ),
             ),
           );
-        }).toList(),
+        }),
       );
     });
   }
@@ -779,7 +1032,7 @@ class _TapTempoButtonState extends State<_TapTempoButton>
   }
 }
 
-// Tap counter label shown below the Tap Tempo button
+// Enhanced tap counter with live BPM and confidence indicator
 class _TapCounterLabel extends StatelessWidget {
   final MetronomeController controller;
 
@@ -800,16 +1053,30 @@ class _TapCounterLabel extends StatelessWidget {
           textAlign: TextAlign.center,
         );
       }
-      final label = count < 2
-          ? 'tap_count_one'.tr
-          : 'tap_count_many'.trParams({'count': '$count'});
+      if (count < 2) {
+        return Text(
+          'tap_count_one'.tr,
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: cs.primary,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        );
+      }
+      // Show detected BPM + tap count + confidence dots
+      final confidence = controller.tapConfidence;
+      final filledDots = (confidence * 4).round().clamp(1, 4);
+      final dots =
+          List.generate(4, (i) => i < filledDots ? '●' : '○').join();
+
       return AnimatedSwitcher(
         duration: const Duration(milliseconds: 150),
         child: Text(
-          label,
-          key: ValueKey(count),
+          '${controller.bpm.value} BPM · $count${'taps_unit'.tr} · $dots',
+          key: ValueKey('$count-${controller.bpm.value}'),
           style: TextStyle(
-            fontSize: 12.sp,
+            fontSize: 13.sp,
             color: cs.primary,
             fontWeight: FontWeight.w600,
           ),

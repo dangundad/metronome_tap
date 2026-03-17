@@ -78,6 +78,27 @@ class GuidePage extends GetView<dynamic> {
                 icon: Icons.bar_chart_rounded,
                 cs: cs,
               ),
+              SizedBox(height: 10.h),
+              _GuideCard(
+                title: 'guide_tip_5_title'.tr,
+                description: 'guide_tip_5_desc'.tr,
+                icon: Icons.graphic_eq_rounded,
+                cs: cs,
+              ),
+              SizedBox(height: 10.h),
+              _GuideCard(
+                title: 'guide_tip_6_title'.tr,
+                description: 'guide_tip_6_desc'.tr,
+                icon: Icons.touch_app_rounded,
+                cs: cs,
+              ),
+              SizedBox(height: 10.h),
+              _GuideCard(
+                title: 'guide_tip_7_title'.tr,
+                description: 'guide_tip_7_desc'.tr,
+                icon: Icons.swipe_vertical_rounded,
+                cs: cs,
+              ),
               SizedBox(height: 16.h),
               Text(
                 'guide_footer'.tr,
