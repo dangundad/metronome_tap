@@ -36,22 +36,6 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // AdMob 초기화 (GDPR/CCPA 동의 → SDK 초기화)
-  try {
-    final canRequestAds = await AdHelper.initializeConsentAndAds();
-    if (canRequestAds) {
-      final status = await AdHelper.currentInitializationStatus();
-      status?.adapterStatuses.forEach((key, value) {
-        debugPrint('Adapter status for $key: ${value.description}');
-      });
-      debugPrint('AdMob initialized successfully');
-    } else {
-      debugPrint('AdMob initialization skipped until consent is available');
-    }
-  } catch (e) {
-    debugPrint('AdMob initialization failed: $e');
-  }
-
   await HiveService.init();
   Get.put<HiveService>(HiveService(), permanent: true);
 
@@ -70,8 +54,27 @@ Future<void> main() async {
   runApp(const MetronomeTapApp());
 }
 
-class MetronomeTapApp extends StatelessWidget {
+class MetronomeTapApp extends StatefulWidget {
   const MetronomeTapApp({super.key});
+
+  @override
+  State<MetronomeTapApp> createState() => _MetronomeTapAppState();
+}
+
+class _MetronomeTapAppState extends State<MetronomeTapApp> {
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_initializeAds());
+  }
+
+  Future<void> _initializeAds() async {
+    try {
+      await AdHelper.initializeConsentAndAds();
+    } catch (e) {
+      debugPrint('AdMob initialization failed: $e');
+    }
+  }
 
   GetMaterialApp _buildFallbackApp() {
     return GetMaterialApp(
