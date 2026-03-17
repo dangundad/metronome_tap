@@ -2,7 +2,7 @@
 
 > 문서: `CLAUDE.md`
 > This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-> 최종 업데이트: 2026-03-08
+> 최종 업데이트: 2026-03-17
 > 기준: 현재 앱 저장소 스캔 + `C:\Flutter_WorkSpace\Flutter_Plan\AGENTS.md` 포트폴리오 상태표
 
 ## 프로젝트 요약
@@ -15,7 +15,7 @@
 - `pubspec` 이름: `metronome_tap`
 - Android 패키지: `com.dangundad.metronometap`
 - 버전: `1.0.0+1`
-- 핵심 기능: 40~280 BPM 슬라이더, 탭 BPM 측정, 박자 패턴, 진동 피드백
+- 핵심 기능: 40~280 BPM 슬라이더, 탭 BPM 측정(신뢰도 표시), 박자 패턴(6종: 2/4·3/4·4/4·5/4·6/8·7/8), 서브디비전(8분·3연음·16분), 악센트 패턴(strong/normal/mute), BPM 드래그 제스처, 진동 피드백
 
 ## 공통 작업 원칙
 - 모든 텍스트 파일은 UTF-8로 유지하고, PowerShell에서 파일을 쓸 때는 `-Encoding UTF8`을 명시합니다.
@@ -40,29 +40,38 @@ flutter run
 
 ## 현재 의존성 하이라이트
 - 기반: `get` ^4.7.3, `hive_ce` ^2.19.3, `hive_ce_flutter` ^2.3.4, `path_provider` ^2.1.5, `intl` ^0.20.2, `uuid` ^4.5.3
-- UI/UX: `flutter_screenutil` ^5.9.3, `flex_color_scheme` ^8.4.0, `google_fonts` ^6.3.2, `lucide_icons_flutter` ^3.1.10, `flutter_animate` ^4.5.2
-- 수익화/운영: `google_mobile_ads` ^6.0.0, `gma_mediation_applovin` ^2.5.1, `gma_mediation_pangle` ^3.5.0, `gma_mediation_unity` ^1.6.2, `in_app_purchase` ^3.2.3, `in_app_review` ^2.0.11, `rate_my_app` ^2.3.2, `firebase_core` ^4.4.0, `firebase_analytics` ^12.1.2, `firebase_crashlytics` ^5.0.7, `device_info_plus` ^12.3.0, `package_info_plus` ^9.0.0, `permission_handler` ^12.0.1, `share_plus` ^12.0.1, `url_launcher` ^6.3.2, `wakelock_plus` ^1.4.0, `vibration` ^3.1.8
+- UI/UX: `flutter_screenutil` ^5.9.3, `flex_color_scheme` ^8.4.0, `google_fonts` ^8.0.2, `lucide_icons_flutter` ^3.1.10, `flutter_animate` ^4.5.2
+- 수익화/운영: `google_mobile_ads` ^7.0.0, `gma_mediation_applovin` ^2.5.2, `gma_mediation_pangle` ^3.5.3, `gma_mediation_unity` ^1.6.5, `in_app_purchase` ^3.2.3, `in_app_review` ^2.0.11, `rate_my_app` ^2.3.2, `firebase_core` ^4.5.0, `firebase_analytics` ^12.1.3, `firebase_crashlytics` ^5.0.8, `device_info_plus` ^12.3.0, `package_info_plus` ^9.0.0, `permission_handler` ^12.0.1, `share_plus` ^12.0.1, `url_launcher` ^6.3.2, `wakelock_plus` ^1.5.1, `vibration` ^3.1.8
 
 ## 현재 코드 구조
 - `lib/app` 디렉터리: `admob`, `bindings`, `controllers`, `data`, `pages`, `routes`, `services`, `theme`, `translate`, `utils`, `widgets`
+- `admob`: `ads_banner.dart`, `ads_helper.dart`, `ads_interstitial.dart`, `ads_rewarded.dart`
 - `bindings`: `app_binding.dart`
 - `routes`: `app_pages.dart`, `app_routes.dart`
-- `controllers`: `history_controller.dart`, `home_controller.dart`, `metronome_controller.dart`, `premium_controller.dart`, `setting_controller.dart`, `stats_controller.dart`
-- 기능 중심 컨트롤러: `metronome_controller`
+- `controllers`: `history_controller.dart`, `home_controller.dart`, `metronome_controller.dart` (`BeatAccent` enum 포함), `premium_controller.dart`, `setting_controller.dart`, `stats_controller.dart`
+- 기능 중심 컨트롤러: `metronome_controller` — 서브디비전, 악센트 패턴, 드리프트 방지 스케줄링, 탭 템포 신뢰도
 - `services`: `activity_log_service.dart`, `app_rating_service.dart`, `hive_service.dart`, `purchase_service.dart`
 - 기능 중심 서비스: 없음
-- `pages`: `guide`, `history`, `home`, `premium`, `settings`, `stats`
+- `pages`: `guide`, `history`, `home`, `premium` (`premium_binding.dart`, `premium_page.dart`), `settings`, `stats`
 - `widgets`: 없음
 - `mixins`: 없음
 - `utils`: `app_constants.dart`
 - `translate`: `translate.dart`
 - `theme`: `app_flex_theme.dart`, `app_theme.dart`
 - `data/models`: 없음
-- `data/enums`: 없음
+- `data/enums`: 없음 (`BeatAccent`는 `metronome_controller.dart` 내 정의)
 - `data/constants`: 없음
 - `data` 루트 파일: 없음
 - `assets`: `data`, `fonts`, `images`
 - `tests`: 1개: `test/widget_test.dart`
+
+## MetronomeController 핵심 구조
+- **BPM**: 40~280 범위, debounce 저장, 세로 드래그 제스처 지원
+- **박자**: `tsOptions` 6종 — (2,4), (3,4), (4,4), (5,4), (6,8), (7,8)
+- **서브디비전**: 1(♩), 2(♪♪), 3(♪♪♪), 4(♬♬) — `_tickDuration = 60s / (bpm × subdivision)`
+- **악센트**: `List<BeatAccent>` — strong(진동 200ms), normal(100ms), mute(무음). 비트 인디케이터 탭으로 순환
+- **탭 템포**: 최대 8탭, 중앙값 기반 이상값 필터, 신뢰도 계수(CV) 0~1.0
+- **Hive 키**: `metro_bpm`, `metro_time_sig`, `metro_ts_denom`, `metro_subdivision`, `metro_accents`, `metro_haptic`, `metro_sound`
 
 ## 문서 유지 규칙
 - 새 페이지나 바인딩을 추가하면 이 문서의 `pages`/`bindings` 요약도 함께 갱신합니다.
