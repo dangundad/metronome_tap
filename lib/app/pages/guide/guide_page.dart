@@ -10,23 +10,10 @@ class GuidePage extends GetView<dynamic> {
     final cs = Get.theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('guide'.tr),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('guide'.tr), centerTitle: true),
       body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                cs.surface,
-                cs.primary.withValues(alpha: 0.05),
-                cs.surface,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
+        child: ColoredBox(
+          color: cs.surface,
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             children: [
@@ -34,11 +21,7 @@ class GuidePage extends GetView<dynamic> {
                 padding: EdgeInsets.all(18.w),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18.r),
-                  gradient: LinearGradient(
-                    colors: [cs.primary, cs.tertiary],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: cs.primary,
                 ),
                 child: Text(
                   'guide_title'.tr,
@@ -166,10 +149,7 @@ class _GuideCard extends StatelessWidget {
                   SizedBox(height: 6.h),
                   Text(
                     description,
-                    style: TextStyle(
-                      color: cs.onSurfaceVariant,
-                      height: 1.45,
-                    ),
+                    style: TextStyle(color: cs.onSurfaceVariant, height: 1.45),
                   ),
                 ],
               ),

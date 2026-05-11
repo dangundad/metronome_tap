@@ -12,20 +12,10 @@ class HistoryPage extends GetView<HistoryController> {
     final cs = Get.theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: cs.surface,
       body: SafeArea(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                cs.surface,
-                cs.surfaceContainerLowest.withValues(alpha: 0.95),
-                cs.surfaceContainerLow.withValues(alpha: 0.9),
-              ],
-            ),
-          ),
+        child: ColoredBox(
+          color: cs.surface,
           child: Column(
             children: [
               _buildHeader(context, cs),
@@ -73,7 +63,8 @@ class HistoryPage extends GetView<HistoryController> {
                       separatorBuilder: (_, _) => SizedBox(height: 10.h),
                       itemBuilder: (context, index) {
                         final item = events[index];
-                        final event = item['event']?.toString() ?? 'unknown_event'.tr;
+                        final event =
+                            item['event']?.toString() ?? 'unknown_event'.tr;
                         final screen = item['screen']?.toString() ?? '-';
                         final route = item['route']?.toString() ?? '-';
                         final at = _formatTime(item['at']);
@@ -101,7 +92,9 @@ class HistoryPage extends GetView<HistoryController> {
                                 width: 40.r,
                                 height: 40.r,
                                 decoration: BoxDecoration(
-                                  color: cs.primaryContainer.withValues(alpha: 0.45),
+                                  color: cs.primaryContainer.withValues(
+                                    alpha: 0.45,
+                                  ),
                                   borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 child: Icon(
@@ -180,11 +173,7 @@ class HistoryPage extends GetView<HistoryController> {
           IconButton(
             onPressed: controller.clearAll,
             tooltip: 'clear_all'.tr,
-            icon: Icon(
-              Icons.delete_outline,
-              size: 20.r,
-              color: cs.error,
-            ),
+            icon: Icon(Icons.delete_outline, size: 20.r, color: cs.error),
           ),
         ],
       ),

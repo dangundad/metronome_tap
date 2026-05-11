@@ -77,6 +77,7 @@ class MetronomeController extends GetxController {
   void onClose() {
     _beatTimer?.cancel();
     _tapResetTimer?.cancel();
+    unawaited(HiveService.to.setAppData(_bpmKey, bpm.value));
     _saveBpmDebounce?.cancel();
     super.onClose();
   }
@@ -99,12 +100,12 @@ class MetronomeController extends GetxController {
     bpm.value = HiveService.to.getAppData<int>(_bpmKey) ?? 120;
     timeSignature.value = HiveService.to.getAppData<int>(_tsKey) ?? 4;
     timeSigDenom.value = HiveService.to.getAppData<int>(_tsDenomKey) ?? 4;
-    hapticEnabled.value =
-        HiveService.to.getAppData<bool>(_hapticKey) ?? true;
-    isSoundEnabled.value =
-        HiveService.to.getAppData<bool>(_soundKey) ?? true;
-    subdivision.value =
-        (HiveService.to.getAppData<int>(_subdivKey) ?? 1).clamp(1, 4);
+    hapticEnabled.value = HiveService.to.getAppData<bool>(_hapticKey) ?? true;
+    isSoundEnabled.value = HiveService.to.getAppData<bool>(_soundKey) ?? true;
+    subdivision.value = (HiveService.to.getAppData<int>(_subdivKey) ?? 1).clamp(
+      1,
+      4,
+    );
 
     // Load accents or reset to defaults
     final savedAccents = HiveService.to.getAppData<List>(_accentsKey);
@@ -271,7 +272,8 @@ class MetronomeController extends GetxController {
 
   /// Duration of one tick (one subdivision unit).
   Duration get _tickDuration => Duration(
-      microseconds: (60000000 / (bpm.value * subdivision.value)).round());
+    microseconds: (60000000 / (bpm.value * subdivision.value)).round(),
+  );
 
   void _fireTick() {
     _tickCount++;
@@ -354,8 +356,7 @@ class MetronomeController extends GetxController {
       // Compute intervals in milliseconds
       final intervals = <int>[];
       for (int i = 1; i < _tapTimes.length; i++) {
-        intervals.add(
-            _tapTimes[i].difference(_tapTimes[i - 1]).inMilliseconds);
+        intervals.add(_tapTimes[i].difference(_tapTimes[i - 1]).inMilliseconds);
       }
 
       // Filter outliers: discard intervals that deviate more than 50%
@@ -364,10 +365,10 @@ class MetronomeController extends GetxController {
 
       if (filteredIntervals.isNotEmpty) {
         final avgInterval =
-            filteredIntervals.reduce((a, b) => a + b) / filteredIntervals.length;
+            filteredIntervals.reduce((a, b) => a + b) /
+            filteredIntervals.length;
         if (avgInterval > 0) {
-          final newBpm =
-              (60000 / avgInterval).round().clamp(_minBpm, _maxBpm);
+          final newBpm = (60000 / avgInterval).round().clamp(_minBpm, _maxBpm);
           setBpm(newBpm);
         }
       }
@@ -385,9 +386,7 @@ class MetronomeController extends GetxController {
     // Threshold: 50% of median
     final threshold = median * 0.5;
 
-    return intervals
-        .where((iv) => (iv - median).abs() <= threshold)
-        .toList();
+    return intervals.where((iv) => (iv - median).abs() <= threshold).toList();
   }
 
   /// Tap confidence: 0.0 to 1.0 based on interval consistency.
@@ -396,16 +395,14 @@ class MetronomeController extends GetxController {
 
     final intervals = <int>[];
     for (int i = 1; i < _tapTimes.length; i++) {
-      intervals.add(
-          _tapTimes[i].difference(_tapTimes[i - 1]).inMilliseconds);
+      intervals.add(_tapTimes[i].difference(_tapTimes[i - 1]).inMilliseconds);
     }
 
     final avg = intervals.reduce((a, b) => a + b) / intervals.length;
     if (avg == 0) return 0.0;
 
-    final variance = intervals
-            .map((iv) => (iv - avg) * (iv - avg))
-            .reduce((a, b) => a + b) /
+    final variance =
+        intervals.map((iv) => (iv - avg) * (iv - avg)).reduce((a, b) => a + b) /
         intervals.length;
     final stdDev = sqrt(variance);
     final cv = stdDev / avg; // coefficient of variation

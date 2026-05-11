@@ -28,10 +28,8 @@ class HomePage extends GetView<MetronomeController> {
                 tween: Tween(begin: 0.9, end: 1.0),
                 duration: const Duration(milliseconds: 650),
                 curve: Curves.easeOutBack,
-                builder: (context, value, child) => Transform.scale(
-                  scale: value,
-                  child: child,
-                ),
+                builder: (context, value, child) =>
+                    Transform.scale(scale: value, child: child),
                 child: Text('🎵', style: TextStyle(fontSize: 28.sp)),
               ),
               SizedBox(width: 8.w),
@@ -89,36 +87,24 @@ class HomePage extends GetView<MetronomeController> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(3),
-          child: Container(
-            height: 3,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [cs.primary, cs.tertiary],
-              ),
-            ),
+          child: ColoredBox(
+            color: cs.primary,
+            child: const SizedBox(height: 3),
           ),
         ),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              cs.primary.withValues(alpha: 0.10),
-              cs.surface,
-              cs.secondaryContainer.withValues(alpha: 0.15),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+      body: ColoredBox(
+        color: cs.surface,
         child: SafeArea(
           top: false,
           child: Column(
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 16.h,
+                  ),
                   child: Column(
                     children: [
                       _BpmDisplay(controller: controller),
@@ -207,20 +193,7 @@ class _BpmDisplayState extends State<_BpmDisplay> {
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isPlaying
-                  ? [
-                      cs.primary.withValues(alpha: 0.25),
-                      cs.primaryContainer,
-                      cs.secondaryContainer.withValues(alpha: 0.7),
-                    ]
-                  : [
-                      cs.primaryContainer,
-                      cs.secondaryContainer.withValues(alpha: 0.7),
-                    ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: cs.primaryContainer,
             borderRadius: BorderRadius.circular(24.r),
             border: Border.all(
               color: isPlaying
@@ -245,7 +218,9 @@ class _BpmDisplayState extends State<_BpmDisplay> {
                 duration: const Duration(milliseconds: 150),
                 transitionBuilder: (child, anim) => ScaleTransition(
                   scale: CurvedAnimation(
-                      parent: anim, curve: Curves.easeOutBack),
+                    parent: anim,
+                    curve: Curves.easeOutBack,
+                  ),
                   child: child,
                 ),
                 child: Text(
@@ -297,8 +272,7 @@ class _BpmDisplayState extends State<_BpmDisplay> {
               SizedBox(height: 10.h),
               // Tempo label badge
               Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
                 decoration: BoxDecoration(
                   color: isPlaying
                       ? cs.primary.withValues(alpha: 0.18)
@@ -487,130 +461,124 @@ class _TimeSignatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext _) {
     final cs = Get.theme.colorScheme;
-    return Obx(() => Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                cs.primaryContainer,
-                cs.secondaryContainer.withValues(alpha: 0.7),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return Obx(
+      () => Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+        decoration: BoxDecoration(
+          color: cs.primaryContainer,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: cs.primary.withValues(alpha: 0.18)),
+          boxShadow: [
+            BoxShadow(
+              color: cs.primary.withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
-            borderRadius: BorderRadius.circular(20.r),
-            boxShadow: [
-              BoxShadow(
-                color: cs.primary.withValues(alpha: 0.12),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Time signature header
-              Row(
-                children: [
-                  Container(
-                    width: 40.r,
-                    height: 40.r,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: cs.onPrimaryContainer.withValues(alpha: 0.12),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Time signature header
+            Row(
+              children: [
+                Container(
+                  width: 40.r,
+                  height: 40.r,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: cs.onPrimaryContainer.withValues(alpha: 0.12),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      LucideIcons.music,
+                      size: 20.r,
+                      color: cs.onPrimaryContainer,
                     ),
-                    child: Center(
-                      child: Icon(
-                        LucideIcons.music,
-                        size: 20.r,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'beat_pattern'.tr,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      controller.tsLabel,
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w800,
                         color: cs.onPrimaryContainer,
                       ),
                     ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 14.h),
+            _TimeSignatureSelector(controller: controller),
+            SizedBox(height: 16.h),
+            // Divider
+            Container(
+              height: 1,
+              color: cs.onPrimaryContainer.withValues(alpha: 0.12),
+            ),
+            SizedBox(height: 14.h),
+            // Subdivision header
+            Row(
+              children: [
+                Container(
+                  width: 40.r,
+                  height: 40.r,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: cs.onPrimaryContainer.withValues(alpha: 0.12),
                   ),
-                  SizedBox(width: 12.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'beat_pattern'.tr,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color:
-                              cs.onPrimaryContainer.withValues(alpha: 0.7),
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        controller.tsLabel,
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                          color: cs.onPrimaryContainer,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 14.h),
-              _TimeSignatureSelector(controller: controller),
-              SizedBox(height: 16.h),
-              // Divider
-              Container(
-                height: 1,
-                color: cs.onPrimaryContainer.withValues(alpha: 0.12),
-              ),
-              SizedBox(height: 14.h),
-              // Subdivision header
-              Row(
-                children: [
-                  Container(
-                    width: 40.r,
-                    height: 40.r,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: cs.onPrimaryContainer.withValues(alpha: 0.12),
+                  child: Center(
+                    child: Icon(
+                      Icons.graphic_eq_rounded,
+                      size: 20.r,
+                      color: cs.onPrimaryContainer,
                     ),
-                    child: Center(
-                      child: Icon(
-                        Icons.graphic_eq_rounded,
-                        size: 20.r,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'subdivision'.tr,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      _subdivisionLabel(),
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w800,
                         color: cs.onPrimaryContainer,
                       ),
                     ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'subdivision'.tr,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color:
-                              cs.onPrimaryContainer.withValues(alpha: 0.7),
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        _subdivisionLabel(),
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                          color: cs.onPrimaryContainer,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 12.h),
-              _SubdivisionSelector(controller: controller),
-            ],
-          ),
-        ));
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 12.h),
+            _SubdivisionSelector(controller: controller),
+          ],
+        ),
+      ),
+    );
   }
 
   String _subdivisionLabel() {
@@ -640,14 +608,14 @@ class _TimeSignatureSelector extends StatelessWidget {
         children: MetronomeController.tsOptions.map((ts) {
           final beats = ts.$1;
           final denom = ts.$2;
-          final isSelected = controller.timeSignature.value == beats &&
+          final isSelected =
+              controller.timeSignature.value == beats &&
               controller.timeSigDenom.value == denom;
           return GestureDetector(
             onTap: () => controller.setTimeSignature(beats, denom),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 170),
-              padding:
-                  EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
                 color: isSelected
                     ? cs.primary
@@ -706,8 +674,7 @@ class _SubdivisionSelector extends StatelessWidget {
               onTap: () => controller.setSubdivision(_values[i]),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 170),
-                padding:
-                    EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? cs.secondary
@@ -753,8 +720,7 @@ class _BpmSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Get.theme.colorScheme;
     return Container(
-      padding:
-          EdgeInsets.only(top: 4.h, left: 10.w, right: 10.w, bottom: 10.h),
+      padding: EdgeInsets.only(top: 4.h, left: 10.w, right: 10.w, bottom: 10.h),
       decoration: BoxDecoration(
         color: cs.surfaceContainerLow,
         borderRadius: BorderRadius.circular(20.r),
@@ -765,8 +731,7 @@ class _BpmSlider extends StatelessWidget {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(
-            color: cs.outline.withValues(alpha: 0.15)),
+        border: Border.all(color: cs.outline.withValues(alpha: 0.15)),
       ),
       child: Obx(() {
         return Column(
@@ -774,10 +739,8 @@ class _BpmSlider extends StatelessWidget {
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 trackHeight: 5.h,
-                thumbShape:
-                    RoundSliderThumbShape(enabledThumbRadius: 10.r),
-                overlayShape:
-                    const RoundSliderOverlayShape(overlayRadius: 16),
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10.r),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
                 activeTrackColor: cs.primary,
                 inactiveTrackColor: cs.surfaceContainerHighest,
               ),
@@ -797,7 +760,9 @@ class _BpmSlider extends StatelessWidget {
                   Text(
                     '${controller.minBpm}',
                     style: TextStyle(
-                        fontSize: 12.sp, color: cs.onSurfaceVariant),
+                      fontSize: 12.sp,
+                      color: cs.onSurfaceVariant,
+                    ),
                   ),
                   Row(
                     children: [
@@ -819,7 +784,9 @@ class _BpmSlider extends StatelessWidget {
                   Text(
                     '${controller.maxBpm}',
                     style: TextStyle(
-                        fontSize: 12.sp, color: cs.onSurfaceVariant),
+                      fontSize: 12.sp,
+                      color: cs.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -876,22 +843,11 @@ class _PlayButton extends StatelessWidget {
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: playing
-              ? LinearGradient(
-                  colors: [cs.error, cs.errorContainer],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                )
-              : LinearGradient(
-                  colors: [cs.primary, cs.tertiary],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
+          color: playing ? cs.error : cs.primary,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: (playing ? cs.error : cs.primary)
-                  .withValues(alpha: 0.40),
+              color: (playing ? cs.error : cs.primary).withValues(alpha: 0.40),
               blurRadius: playing ? 24 : 14,
               spreadRadius: playing ? 2 : 0,
               offset: const Offset(0, 5),
@@ -909,9 +865,7 @@ class _PlayButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    playing
-                        ? LucideIcons.square
-                        : LucideIcons.play,
+                    playing ? LucideIcons.square : LucideIcons.play,
                     size: 22.r,
                     color: playing ? cs.onError : cs.onPrimary,
                   ),
@@ -956,9 +910,10 @@ class _TapTempoButtonState extends State<_TapTempoButton>
       reverseDuration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scaleAnim = Tween<double>(begin: 1.0, end: 0.94).animate(
-      CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut),
-    );
+    _scaleAnim = Tween<double>(
+      begin: 1.0,
+      end: 0.94,
+    ).animate(CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut));
   }
 
   @override
@@ -986,10 +941,8 @@ class _TapTempoButtonState extends State<_TapTempoButton>
     final cs = Get.theme.colorScheme;
     return AnimatedBuilder(
       animation: _scaleAnim,
-      builder: (context, child) => Transform.scale(
-        scale: _scaleAnim.value,
-        child: child,
-      ),
+      builder: (context, child) =>
+          Transform.scale(scale: _scaleAnim.value, child: child),
       child: SizedBox(
         width: double.infinity,
         height: 52.h,
@@ -1009,11 +962,7 @@ class _TapTempoButtonState extends State<_TapTempoButton>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  LucideIcons.pointer,
-                  size: 20.r,
-                  color: cs.primary,
-                ),
+                Icon(LucideIcons.pointer, size: 20.r, color: cs.primary),
                 SizedBox(width: 8.w),
                 Text(
                   'tap_tempo'.tr,
@@ -1067,8 +1016,7 @@ class _TapCounterLabel extends StatelessWidget {
       // Show detected BPM + tap count + confidence dots
       final confidence = controller.tapConfidence;
       final filledDots = (confidence * 4).round().clamp(1, 4);
-      final dots =
-          List.generate(4, (i) => i < filledDots ? '●' : '○').join();
+      final dots = List.generate(4, (i) => i < filledDots ? '●' : '○').join();
 
       return AnimatedSwitcher(
         duration: const Duration(milliseconds: 150),

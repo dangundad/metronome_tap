@@ -12,20 +12,10 @@ class StatsPage extends GetView<StatsController> {
     final cs = Get.theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: cs.surface,
       body: SafeArea(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                cs.surface,
-                cs.surfaceContainerLowest.withValues(alpha: 0.94),
-                cs.surfaceContainerLow.withValues(alpha: 0.9),
-              ],
-            ),
-          ),
+        child: ColoredBox(
+          color: cs.surface,
           child: Column(
             children: [
               Padding(
@@ -45,11 +35,7 @@ class StatsPage extends GetView<StatsController> {
                     IconButton(
                       onPressed: () => controller.refresh(),
                       tooltip: 'refresh'.tr,
-                      icon: Icon(
-                        Icons.refresh,
-                        size: 20.r,
-                        color: cs.primary,
-                      ),
+                      icon: Icon(Icons.refresh, size: 20.r, color: cs.primary),
                     ),
                   ],
                 ),
@@ -65,12 +51,30 @@ class StatsPage extends GetView<StatsController> {
                         _MetricCard(
                           cs: cs,
                           entries: [
-                            _MetricData('total_events'.tr, '${controller.totalEvents.value}'),
-                            _MetricData('today_events'.tr, '${controller.todayEvents.value}'),
-                            _MetricData('week_events'.tr, '${controller.weekEvents.value}'),
-                            _MetricData('open_stats'.tr, '${controller.openStatsCount.value}'),
-                            _MetricData('unique_routes'.tr, '${controller.uniqueRoutes.value}'),
-                            _MetricData('unique_screens'.tr, '${controller.uniqueScreens.value}'),
+                            _MetricData(
+                              'total_events'.tr,
+                              '${controller.totalEvents.value}',
+                            ),
+                            _MetricData(
+                              'today_events'.tr,
+                              '${controller.todayEvents.value}',
+                            ),
+                            _MetricData(
+                              'week_events'.tr,
+                              '${controller.weekEvents.value}',
+                            ),
+                            _MetricData(
+                              'open_stats'.tr,
+                              '${controller.openStatsCount.value}',
+                            ),
+                            _MetricData(
+                              'unique_routes'.tr,
+                              '${controller.uniqueRoutes.value}',
+                            ),
+                            _MetricData(
+                              'unique_screens'.tr,
+                              '${controller.uniqueScreens.value}',
+                            ),
                           ],
                         ),
                         SizedBox(height: 16.h),
@@ -91,8 +95,11 @@ class StatsPage extends GetView<StatsController> {
                                   ),
                                 )
                               : Column(
-                                  children: controller.topEventNames.map((name) {
-                                    final count = controller.eventCountMap[name] ?? 0;
+                                  children: controller.topEventNames.map((
+                                    name,
+                                  ) {
+                                    final count =
+                                        controller.eventCountMap[name] ?? 0;
                                     return _TopEventRow(
                                       event: name,
                                       count: count,
@@ -126,10 +133,7 @@ class _MetricCard extends StatelessWidget {
   final ColorScheme cs;
   final List<_MetricData> entries;
 
-  const _MetricCard({
-    required this.cs,
-    required this.entries,
-  });
+  const _MetricCard({required this.cs, required this.entries});
 
   @override
   Widget build(BuildContext context) {
@@ -257,11 +261,7 @@ class _TopEventRow extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
       child: Row(
         children: [
-          Icon(
-            Icons.history,
-            size: 16.r,
-            color: cs.primary,
-          ),
+          Icon(Icons.history, size: 16.r, color: cs.primary),
           SizedBox(width: 10.w),
           Expanded(
             child: Text(

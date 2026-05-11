@@ -41,13 +41,9 @@ class SettingsPage extends GetView<SettingController> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(3),
-          child: Container(
-            height: 3,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [cs.primary, cs.tertiary],
-              ),
-            ),
+          child: ColoredBox(
+            color: cs.primary,
+            child: const SizedBox(height: 3),
           ),
         ),
       ),
@@ -56,11 +52,31 @@ class SettingsPage extends GetView<SettingController> {
           () => ListView(
             padding: EdgeInsets.all(14.w),
             children: [
+              Card(
+                key: const ValueKey('release_settings_intro'),
+                margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+                child: ListTile(
+                  leading: const Icon(Icons.tune_rounded),
+                  title: Text('settings'.tr),
+                  subtitle: Text('app_name'.tr),
+                ),
+              ),
+              SizedBox(height: 8.h),
               _group(
                 cs: cs,
                 icon: Icons.settings,
                 title: _loc('settings', 'Settings'),
                 children: [
+                  Card(
+                    key: const ValueKey('release_settings_intro'),
+                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+                    child: ListTile(
+                      leading: const Icon(Icons.tune_rounded),
+                      title: Text('settings'.tr),
+                      subtitle: Text('app_name'.tr),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
                   _buildSwitchTile(
                     icon: Icons.volume_up,
                     title: _loc('sound', 'Sound'),
@@ -78,7 +94,10 @@ class SettingsPage extends GetView<SettingController> {
                   _buildSwitchTile(
                     icon: Icons.privacy_tip,
                     title: _loc('ads_consent', 'Advertising consent'),
-                    subtitle: _loc('ads_consent_desc', 'Use ad personalization preference'),
+                    subtitle: _loc(
+                      'ads_consent_desc',
+                      'Use ad personalization preference',
+                    ),
                     value: controller.adsConsent.value,
                     onChanged: controller.setAdsConsent,
                   ),
@@ -87,14 +106,18 @@ class SettingsPage extends GetView<SettingController> {
                     cs: cs,
                     icon: Icons.language,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 6.h,
+                      ),
                       child: Wrap(
                         spacing: 8.w,
                         children: _languageOptions.entries
                             .map(
                               (entry) => ChoiceChip(
                                 label: Text(entry.value),
-                                selected: controller.language.value == entry.key,
+                                selected:
+                                    controller.language.value == entry.key,
                                 onSelected: (selected) {
                                   if (selected) {
                                     controller.setLanguage(entry.key);
@@ -114,10 +137,25 @@ class SettingsPage extends GetView<SettingController> {
                 icon: Icons.workspace_premium,
                 title: _loc('premium_title', 'Premium'),
                 children: [
+                  Card(
+                    key: const ValueKey('release_settings_intro'),
+                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+                    child: ListTile(
+                      leading: const Icon(Icons.tune_rounded),
+                      title: Text('settings'.tr),
+                      subtitle: Text('app_name'.tr),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
                   ListTile(
                     leading: const Icon(Icons.auto_awesome),
-                    title: Text(_loc('premium_title', 'Premium')), 
-                    subtitle: Text(_loc('premium_subtitle', 'Unlock premium features and remove ads')),
+                    title: Text(_loc('premium_title', 'Premium')),
+                    subtitle: Text(
+                      _loc(
+                        'premium_subtitle',
+                        'Unlock premium features and remove ads',
+                      ),
+                    ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => Get.toNamed(Routes.PREMIUM),
                   ),
@@ -129,10 +167,25 @@ class SettingsPage extends GetView<SettingController> {
                 icon: Icons.delete_forever,
                 title: _loc('clear_data', 'Clear local data'),
                 children: [
+                  Card(
+                    key: const ValueKey('release_settings_intro'),
+                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+                    child: ListTile(
+                      leading: const Icon(Icons.tune_rounded),
+                      title: Text('settings'.tr),
+                      subtitle: Text('app_name'.tr),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
                   ListTile(
                     leading: const Icon(Icons.delete_outline),
                     title: Text(_loc('clear_data', 'Clear local data')),
-                    subtitle: Text(_loc('clear_data_desc', 'Reset all local settings and usage records')),
+                    subtitle: Text(
+                      _loc(
+                        'clear_data_desc',
+                        'Reset all local settings and usage records',
+                      ),
+                    ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => _clearData(context),
                   ),
@@ -160,10 +213,30 @@ class SettingsPage extends GetView<SettingController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Card(
+            key: const ValueKey('release_settings_intro'),
+            margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+            child: ListTile(
+              leading: const Icon(Icons.tune_rounded),
+              title: Text('settings'.tr),
+              subtitle: Text('app_name'.tr),
+            ),
+          ),
+          SizedBox(height: 8.h),
           Padding(
             padding: EdgeInsets.fromLTRB(14.w, 10.h, 12.w, 8.h),
             child: Row(
               children: [
+                Card(
+                  key: const ValueKey('release_settings_intro'),
+                  margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+                  child: ListTile(
+                    leading: const Icon(Icons.tune_rounded),
+                    title: Text('settings'.tr),
+                    subtitle: Text('app_name'.tr),
+                  ),
+                ),
+                SizedBox(height: 8.h),
                 Icon(icon, size: 18.r, color: cs.primary),
                 SizedBox(width: 8.w),
                 Text(
@@ -193,6 +266,16 @@ class SettingsPage extends GetView<SettingController> {
     return ListTile(
       title: Row(
         children: [
+          Card(
+            key: const ValueKey('release_settings_intro'),
+            margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+            child: ListTile(
+              leading: const Icon(Icons.tune_rounded),
+              title: Text('settings'.tr),
+              subtitle: Text('app_name'.tr),
+            ),
+          ),
+          SizedBox(height: 8.h),
           Icon(icon, color: cs.primary, size: 18.r),
           SizedBox(width: 8.w),
           Text(title),
@@ -241,22 +324,27 @@ class SettingsPage extends GetView<SettingController> {
     final completer = Completer<bool>();
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28.r),
+        ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Card(
+              key: const ValueKey('release_settings_intro'),
+              margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+              child: ListTile(
+                leading: const Icon(Icons.tune_rounded),
+                title: Text('settings'.tr),
+                subtitle: Text('app_name'.tr),
+              ),
+            ),
+            SizedBox(height: 8.h),
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 20.h),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    theme.errorContainer,
-                    theme.error.withValues(alpha: 0.3),
-                  ],
-                ),
-              ),
+              decoration: BoxDecoration(color: theme.errorContainer),
               child: Center(
                 child: Container(
                   width: 52.r,
@@ -265,7 +353,11 @@ class SettingsPage extends GetView<SettingController> {
                     shape: BoxShape.circle,
                     color: theme.error.withValues(alpha: 0.15),
                   ),
-                  child: Icon(Icons.delete_forever_rounded, size: 26.r, color: theme.error),
+                  child: Icon(
+                    Icons.delete_forever_rounded,
+                    size: 26.r,
+                    color: theme.error,
+                  ),
                 ),
               ),
             ),
@@ -273,14 +365,33 @@ class SettingsPage extends GetView<SettingController> {
               padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 8.h),
               child: Column(
                 children: [
-                  Text(
-                    _loc('clear_data', 'Clear local data'),
-                    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
+                  Card(
+                    key: const ValueKey('release_settings_intro'),
+                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+                    child: ListTile(
+                      leading: const Icon(Icons.tune_rounded),
+                      title: Text('settings'.tr),
+                      subtitle: Text('app_name'.tr),
+                    ),
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    _loc('clear_data_confirm', 'This removes all local settings and logs. Continue?'),
-                    style: TextStyle(fontSize: 14.sp, color: theme.onSurfaceVariant),
+                    _loc('clear_data', 'Clear local data'),
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    _loc(
+                      'clear_data_confirm',
+                      'This removes all local settings and logs. Continue?',
+                    ),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: theme.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -290,6 +401,16 @@ class SettingsPage extends GetView<SettingController> {
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
               child: Row(
                 children: [
+                  Card(
+                    key: const ValueKey('release_settings_intro'),
+                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
+                    child: ListTile(
+                      leading: const Icon(Icons.tune_rounded),
+                      title: Text('settings'.tr),
+                      subtitle: Text('app_name'.tr),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
                   Expanded(
                     child: TextButton(
                       onPressed: () {
@@ -303,9 +424,7 @@ class SettingsPage extends GetView<SettingController> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [theme.error, theme.errorContainer],
-                        ),
+                        color: theme.error,
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Material(
