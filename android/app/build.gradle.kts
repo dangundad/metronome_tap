@@ -3,10 +3,6 @@ import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
-    // START: FlutterFire Configuration
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    // END: FlutterFire Configuration
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
@@ -34,10 +30,10 @@ val flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "
 android {
     namespace = "com.dangundad.metronometap"
     compileSdk = Math.max(flutter.compileSdkVersion, 36)
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
-        isCoreLibraryDesugaringEnabled = true 
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -87,21 +83,18 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
-    implementation("androidx.work:work-runtime-ktx:2.7.1")
-    implementation("com.google.android.gms:play-services-basement:18.4.0")
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.1.20"))
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-analytics")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
+    implementation("com.google.android.gms:play-services-basement:18.10.0")
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.2.20"))
     implementation("androidx.multidex:multidex:2.0.1")
 
-    // Android 15 SDK 35 대응 의존성 (androidx.core 1.17.0은 Kotlin 2.0+ 요구)
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.activity:activity-ktx:1.11.0")
-    implementation("androidx.window:window:1.4.0")
+    // Android 15/16 compatibility dependencies.
+    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.activity:activity-ktx:1.13.0")
+    implementation("androidx.window:window:1.5.1")
 
-    // AdMob Android 15 호환성을 위한 최신 의존성
-    implementation("com.google.android.gms:play-services-ads:24.7.0")
-    implementation("com.google.android.ump:user-messaging-platform:3.1.0")
+    // AdMob and UMP.
+    implementation("com.google.android.gms:play-services-ads:25.3.0")
+    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 }

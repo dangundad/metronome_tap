@@ -52,54 +52,17 @@ class SettingsPage extends GetView<SettingController> {
           () => ListView(
             padding: EdgeInsets.all(14.w),
             children: [
-              Card(
-                key: const ValueKey('release_settings_intro'),
-                margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-                child: ListTile(
-                  leading: const Icon(Icons.tune_rounded),
-                  title: Text('settings'.tr),
-                  subtitle: Text('app_name'.tr),
-                ),
-              ),
-              SizedBox(height: 8.h),
               _group(
                 cs: cs,
                 icon: Icons.settings,
                 title: _loc('settings', 'Settings'),
                 children: [
-                  Card(
-                    key: const ValueKey('release_settings_intro'),
-                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-                    child: ListTile(
-                      leading: const Icon(Icons.tune_rounded),
-                      title: Text('settings'.tr),
-                      subtitle: Text('app_name'.tr),
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  _buildSwitchTile(
-                    icon: Icons.volume_up,
-                    title: _loc('sound', 'Sound'),
-                    subtitle: _loc('sound_desc', 'Play sound effects'),
-                    value: controller.soundEnabled.value,
-                    onChanged: controller.setSoundEnabled,
-                  ),
                   _buildSwitchTile(
                     icon: Icons.vibration,
                     title: _loc('haptic', 'Haptic feedback'),
                     subtitle: _loc('haptic_desc', 'Vibrate for interactions'),
                     value: controller.hapticEnabled.value,
                     onChanged: controller.setHapticEnabled,
-                  ),
-                  _buildSwitchTile(
-                    icon: Icons.privacy_tip,
-                    title: _loc('ads_consent', 'Advertising consent'),
-                    subtitle: _loc(
-                      'ads_consent_desc',
-                      'Use ad personalization preference',
-                    ),
-                    value: controller.adsConsent.value,
-                    onChanged: controller.setAdsConsent,
                   ),
                   _sectionTitle(
                     title: _loc('language', 'Language'),
@@ -137,16 +100,6 @@ class SettingsPage extends GetView<SettingController> {
                 icon: Icons.workspace_premium,
                 title: _loc('premium_title', 'Premium'),
                 children: [
-                  Card(
-                    key: const ValueKey('release_settings_intro'),
-                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-                    child: ListTile(
-                      leading: const Icon(Icons.tune_rounded),
-                      title: Text('settings'.tr),
-                      subtitle: Text('app_name'.tr),
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
                   ListTile(
                     leading: const Icon(Icons.auto_awesome),
                     title: Text(_loc('premium_title', 'Premium')),
@@ -167,16 +120,6 @@ class SettingsPage extends GetView<SettingController> {
                 icon: Icons.delete_forever,
                 title: _loc('clear_data', 'Clear local data'),
                 children: [
-                  Card(
-                    key: const ValueKey('release_settings_intro'),
-                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-                    child: ListTile(
-                      leading: const Icon(Icons.tune_rounded),
-                      title: Text('settings'.tr),
-                      subtitle: Text('app_name'.tr),
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
                   ListTile(
                     leading: const Icon(Icons.delete_outline),
                     title: Text(_loc('clear_data', 'Clear local data')),
@@ -213,30 +156,10 @@ class SettingsPage extends GetView<SettingController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Card(
-            key: const ValueKey('release_settings_intro'),
-            margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-            child: ListTile(
-              leading: const Icon(Icons.tune_rounded),
-              title: Text('settings'.tr),
-              subtitle: Text('app_name'.tr),
-            ),
-          ),
-          SizedBox(height: 8.h),
           Padding(
             padding: EdgeInsets.fromLTRB(14.w, 10.h, 12.w, 8.h),
             child: Row(
               children: [
-                Card(
-                  key: const ValueKey('release_settings_intro'),
-                  margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-                  child: ListTile(
-                    leading: const Icon(Icons.tune_rounded),
-                    title: Text('settings'.tr),
-                    subtitle: Text('app_name'.tr),
-                  ),
-                ),
-                SizedBox(height: 8.h),
                 Icon(icon, size: 18.r, color: cs.primary),
                 SizedBox(width: 8.w),
                 Text(
@@ -266,16 +189,6 @@ class SettingsPage extends GetView<SettingController> {
     return ListTile(
       title: Row(
         children: [
-          Card(
-            key: const ValueKey('release_settings_intro'),
-            margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-            child: ListTile(
-              leading: const Icon(Icons.tune_rounded),
-              title: Text('settings'.tr),
-              subtitle: Text('app_name'.tr),
-            ),
-          ),
-          SizedBox(height: 8.h),
           Icon(icon, color: cs.primary, size: 18.r),
           SizedBox(width: 8.w),
           Text(title),
@@ -331,16 +244,6 @@ class SettingsPage extends GetView<SettingController> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Card(
-              key: const ValueKey('release_settings_intro'),
-              margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-              child: ListTile(
-                leading: const Icon(Icons.tune_rounded),
-                title: Text('settings'.tr),
-                subtitle: Text('app_name'.tr),
-              ),
-            ),
-            SizedBox(height: 8.h),
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 20.h),
@@ -365,16 +268,6 @@ class SettingsPage extends GetView<SettingController> {
               padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 8.h),
               child: Column(
                 children: [
-                  Card(
-                    key: const ValueKey('release_settings_intro'),
-                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-                    child: ListTile(
-                      leading: const Icon(Icons.tune_rounded),
-                      title: Text('settings'.tr),
-                      subtitle: Text('app_name'.tr),
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
                   Text(
                     _loc('clear_data', 'Clear local data'),
                     style: TextStyle(
@@ -401,16 +294,6 @@ class SettingsPage extends GetView<SettingController> {
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
               child: Row(
                 children: [
-                  Card(
-                    key: const ValueKey('release_settings_intro'),
-                    margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-                    child: ListTile(
-                      leading: const Icon(Icons.tune_rounded),
-                      title: Text('settings'.tr),
-                      subtitle: Text('app_name'.tr),
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
                   Expanded(
                     child: TextButton(
                       onPressed: () {

@@ -340,7 +340,9 @@ class _BeatIndicator extends StatelessWidget {
         children.add(
           GestureDetector(
             onTap: () {
-              HapticFeedback.lightImpact();
+              if (controller.hapticEnabled.value) {
+                HapticFeedback.lightImpact();
+              }
               controller.toggleAccent(i);
             },
             child: AnimatedContainer(
@@ -928,7 +930,9 @@ class _TapTempoButtonState extends State<_TapTempoButton>
 
   void _onTapUp(TapUpDetails _) {
     _pressCtrl.reverse();
-    HapticFeedback.lightImpact();
+    if (widget.controller.hapticEnabled.value) {
+      HapticFeedback.lightImpact();
+    }
     widget.controller.onTap();
   }
 
