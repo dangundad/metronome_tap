@@ -1,4 +1,4 @@
-﻿// ================================================
+// ================================================
 // DangunDad Flutter App - app_constants.dart Template
 // ================================================
 
@@ -38,17 +38,17 @@ abstract class AnimationDurations {
 
 /// IAP 상품 ID
 abstract class PurchaseConstants {
-  static const String PREMIUM_WEEKLY_ANDROID =
-      '${AppUrls.PACKAGE_NAME}.premium_weekly';
-  static const String PREMIUM_MONTHLY_ANDROID =
-      '${AppUrls.PACKAGE_NAME}.premium_monthly';
-  static const String PREMIUM_YEARLY_ANDROID =
-      '${AppUrls.PACKAGE_NAME}.premium_yearly';
+  static const String PREMIUM_SMALL_ANDROID =
+      '${AppUrls.PACKAGE_NAME}.premium_small';
+  static const String PREMIUM_MEDIUM_ANDROID =
+      '${AppUrls.PACKAGE_NAME}.premium_medium';
+  static const String PREMIUM_LARGE_ANDROID =
+      '${AppUrls.PACKAGE_NAME}.premium_large';
 
   static const List<String> ANDROID_PRODUCT_IDS = [
-    PREMIUM_WEEKLY_ANDROID,
-    PREMIUM_MONTHLY_ANDROID,
-    PREMIUM_YEARLY_ANDROID,
+    PREMIUM_SMALL_ANDROID,
+    PREMIUM_MEDIUM_ANDROID,
+    PREMIUM_LARGE_ANDROID,
   ];
 }
 

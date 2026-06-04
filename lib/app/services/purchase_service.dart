@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -26,9 +26,11 @@ class PurchaseService extends GetxService {
   bool get hasActivePremium => isPremium.value || isDevPremium.value;
 
   String get premiumPriceWithFallback {
-    final price = products.firstWhereOrNull(
-      (p) => p.id == PurchaseConstants.ANDROID_PRODUCT_IDS.first,
-    )?.price;
+    final price = products
+        .firstWhereOrNull(
+          (p) => p.id == PurchaseConstants.ANDROID_PRODUCT_IDS[1],
+        )
+        ?.price;
     return price ?? r'$2.99';
   }
 
@@ -237,7 +239,7 @@ class PurchaseService extends GetxService {
     isPremium.value = true;
     await _savePremiumStatus(true);
     await _syncAdsForPremiumStatus(true);
-    
+
     isLoading.value = false;
 
     statusMessage.value = 'purchase_success'.tr;
@@ -253,9 +255,12 @@ class PurchaseService extends GetxService {
   Future<void> _loadPremiumFromStorage() async {
     try {
       isPremium.value =
-          HiveService.to.getSetting<bool>(HiveKeys.IS_PREMIUM, defaultValue: false) ??
+          HiveService.to.getSetting<bool>(
+            HiveKeys.IS_PREMIUM,
+            defaultValue: false,
+          ) ??
           false;
-    await _syncAdsForPremiumStatus(isPremium.value);
+      await _syncAdsForPremiumStatus(isPremium.value);
     } catch (e) {
       isPremium.value = false;
       errorMessage.value = e.toString();
@@ -294,9 +299,5 @@ class PurchaseService extends GetxService {
     if (!Get.isRegistered<RewardedAdManager>()) {
       Get.put(RewardedAdManager(), permanent: true);
     }
+  }
 }
-
-
-
-}
-
